@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,21 +12,225 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js for visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
-        .nav-btn.active { background-color: #4338ca; color: white; }
-        .note { transition: box-shadow 0.2s, background-color 0.2s; }
-        .note:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
-        .note-header { cursor: move; height: 25px; width: 100%; position: absolute; top: 0; left: 0; }
-        .note textarea { width: 100%; height: calc(100% - 30px); border: none; background: transparent; font-size: 14px; outline: none; resize: none; margin-top: 20px; }
-        .note .delete-btn { opacity: 0; transition: opacity 0.2s; }
-        .note:hover .delete-btn { opacity: 1; }
-        .tab-link.active { border-color: #4338ca; color: #4338ca; background-color: white; border-bottom-color: transparent; }
-        .tab-link:not(.active) { border-color: transparent; }
+        :root[data-theme="light"] {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --accent-primary: #4338ca;
+            --accent-secondary: #6366f1;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --text-primary: #f3f4f6;
+            --text-secondary: #d1d5db;
+            --accent-primary: #6366f1;
+            --accent-secondary: #818cf8;
+        }
+
+        :root[data-theme="nature"] {
+            --bg-primary: #f0fdf4;
+            --bg-secondary: #ffffff;
+            --text-primary: #064e3b;
+            --text-secondary: #065f46;
+            --accent-primary: #059669;
+            --accent-secondary: #10b981;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active { 
+            background-color: var(--accent-primary); 
+            color: white; 
+        }
+
+        .note { 
+            transition: box-shadow 0.2s, background-color 0.2s; 
+        }
+
+        .note:hover { 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); 
+        }
+
+        .note-header { 
+            cursor: move; 
+            height: 25px; 
+            width: 100%; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+        }
+
+        .note textarea { 
+            width: 100%; 
+            height: calc(100% - 30px); 
+            border: none; 
+            background: transparent; 
+            font-size: 14px; 
+            outline: none; 
+            resize: none; 
+            margin-top: 20px; 
+            color: var(--text-primary);
+        }
+
+        .note .delete-btn { 
+            opacity: 0; 
+            transition: opacity 0.2s; 
+        }
+
+        .note:hover .delete-btn { 
+            opacity: 1; 
+        }
+
+        .tab-link.active { 
+            border-color: var(--accent-primary); 
+            color: var(--accent-primary); 
+            background-color: var(--bg-secondary); 
+            border-bottom-color: transparent; 
+        }
+
+        .tab-link:not(.active) { 
+            border-color: transparent; 
+        }
+
+        .dashboard-card {
+            background-color: var(--bg-secondary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .theme-switcher {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: var(--bg-secondary);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .theme-option {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            margin: 0.25rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .theme-option.active {
+            border-color: var(--accent-primary);
+        }
+
+        .theme-option[data-theme="light"] {
+            background: linear-gradient(45deg, #f8f9fa 50%, #ffffff 50%);
+        }
+
+        .theme-option[data-theme="dark"] {
+            background: linear-gradient(45deg, #1f2937 50%, #111827 50%);
+        }
+
+        .theme-option[data-theme="nature"] {
+            background: linear-gradient(45deg, #f0fdf4 50%, #059669 50%);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: var(--accent-secondary);
+            color: white;
+        }
+
+        .achievement-earned {
+            background-color: var(--bg-secondary);
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            border: 1px solid var(--accent-primary);
+        }
+
+        .streak-counter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background-color: var(--bg-secondary);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .streak-days {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+        }
+
+        .toast-container {
+            position: fixed !important;
+            top: 2rem !important;
+            right: 2rem !important;
+            z-index: 9999 !important;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+        .toast {
+            background-color: #333 !important;
+            color: white !important;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: translateY(-20px);
+            min-width: 200px;
+            max-width: 350px;
+            font-size: 1rem;
+            pointer-events: auto;
+        }
+        .toast.show {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+        .toast.success {
+            background-color: #28a745 !important;
+        }
+        .toast.error {
+            background-color: #dc3545 !important;
+        }
+        .toast.info {
+            background-color: #007bff !important;
+        }
     </style>
 </head>
 <body class="text-gray-800">
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <div class="theme-option active" data-theme="light" onclick="changeTheme('light')"></div>
+        <div class="theme-option" data-theme="dark" onclick="changeTheme('dark')"></div>
+        <div class="theme-option" data-theme="nature" onclick="changeTheme('nature')"></div>
+        <!-- New: Dark Mode Toggle Button -->
+        <button id="dark-mode-toggle" title="Toggle Dark Mode" style="margin-left: 1rem; background: none; border: none; cursor: pointer; font-size: 1.5rem;">
+            <span id="dark-mode-icon">🌙</span>
+        </button>
+    </div>
+
     <!-- Login Screen -->
     <div id="login-screen" class="fixed inset-0 bg-gray-100 z-50 flex items-center justify-center">
         <div class="w-full max-w-sm p-8 bg-white rounded-xl shadow-lg">
@@ -43,24 +247,25 @@
 
     <!-- Main Application Container -->
     <div id="app-container" class="min-h-screen hidden">
-        <header class="bg-white shadow-sm sticky top-0 z-40">
-            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center">
-                        <i class="fas fa-user-shield text-2xl text-indigo-600"></i>
-                        <h1 class="ml-3 text-xl font-bold text-gray-700">Personal Assistant Pro</h1>
-                    </div>
-                    <div class="flex items-center">
-                        <span id="welcome-message" class="text-gray-600 font-medium hidden md:block"></span>
-                        <div class="hidden md:flex items-baseline space-x-4 ml-6">
-                            <button onclick="showSection('tasks')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-200 active">Tasks</button>
-                            <button onclick="showSection('budget')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-200">Budget</button>
-                            <button onclick="showSection('notes')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-200">Notes</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Header -->
+        <div class="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-3xl text-indigo-600"><i class="fas fa-user-shield"></i></span>
+            <span class="text-2xl font-bold text-gray-800">Personal Assistant Pro</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span id="header-greeting" class="text-xl font-semibold text-green-700 bg-green-50 px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
+              🏆 Welcome back, Champ!!
+            </span>
+            <!-- Navigation -->
+            <nav class="ml-6 flex gap-4">
+              <button onclick="showSection('dashboard')" class="px-4 py-2 rounded-lg font-semibold bg-green-600 text-white">Dashboard</button>
+              <button onclick="showSection('tasks')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Tasks</button>
+              <button onclick="showSection('budget')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Budget</button>
+              <button onclick="showSection('notes')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Notes</button>
             </nav>
-        </header>
+          </div>
+        </div>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
             <div id="daily-recommendation" class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-md mb-6 flex items-center">
@@ -69,11 +274,128 @@
                 <button onclick="getAIRecommendation()" class="ml-auto text-indigo-500 hover:text-indigo-700"><i class="fas fa-sync-alt"></i></button>
             </div>
             
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="app-section">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <!-- Task Stats -->
+                    <div class="dashboard-card">
+                        <h3 class="text-lg font-semibold mb-2">Task Overview</h3>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-2xl font-bold" id="dashboard-total-tasks">0</p>
+                                <p class="text-sm text-gray-500">Total Tasks</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-green-500" id="dashboard-completed-tasks">0</p>
+                                <p class="text-sm text-gray-500">Completed</p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="streak-counter">
+                                <i class="fas fa-fire text-orange-500"></i>
+                                <span class="streak-days" id="streak-count">0</span>
+                                <span>Day Streak</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Budget Overview -->
+                    <div class="dashboard-card">
+                        <h3 class="text-lg font-semibold mb-2">Budget Overview</h3>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-2xl font-bold text-green-500" id="dashboard-total-income">$0.00</p>
+                                <p class="text-sm text-gray-500">Income</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-red-500" id="dashboard-total-expenses">$0.00</p>
+                                <p class="text-sm text-gray-500">Expenses</p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-500">Monthly Goal Progress</p>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                <div class="bg-indigo-600 h-2.5 rounded-full" id="budget-progress" style="width: 0%"></div>
+                            </div>
+                            <p id="monthly-goal-summary" class="text-xs text-gray-600 mt-1"></p>
+                        </div>
+                    </div>
+
+                    <!-- Recent Notes -->
+                    <div class="dashboard-card">
+                        <h3 class="text-lg font-semibold mb-2">Recent Notes</h3>
+                        <div id="recent-notes" class="space-y-2">
+                            <p class="text-sm text-gray-500">No recent notes</p>
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="dashboard-card">
+                        <h3 class="text-lg font-semibold mb-2">Achievements</h3>
+                        <div id="achievements" class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-trophy text-yellow-500"></i>
+                                <span class="text-sm">Complete your first task</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="dashboard-card">
+                        <h3 class="text-lg font-semibold mb-4">Task Completion Trend</h3>
+                        <canvas id="taskTrendChart"></canvas>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3 class="text-lg font-semibold mb-4">Spending Pattern</h3>
+                        <canvas id="spendingPatternChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Upcoming Tasks -->
+                <div class="dashboard-card">
+                    <h3 class="text-lg font-semibold mb-4">Upcoming Tasks</h3>
+                    <div id="upcoming-tasks" class="space-y-2">
+                        <p class="text-sm text-gray-500">No upcoming tasks</p>
+                    </div>
+                </div>
+
+                <!-- New: Smart Suggestions Section -->
+                <div class="bg-white p-4 rounded-lg shadow mt-4">
+                    <h3 class="text-lg font-semibold mb-2">Smart Suggestions</h3>
+                    <div id="smart-suggestions-list" class="flex flex-wrap gap-2"></div>
+                </div>
+                <!-- New: Spending Recommendations Section -->
+                <div class="bg-white p-4 rounded-lg shadow mt-4">
+                    <h3 class="text-lg font-semibold mb-2">Spending Recommendations</h3>
+                    <div id="spending-recommendations-list" class="flex flex-col gap-2"></div>
+                </div>
+                <!-- Habit Tracker Section -->
+                <div class="bg-white rounded-lg shadow p-4 mb-6">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700 flex items-center"><i class="fas fa-seedling mr-2"></i>Habit Tracker</h2>
+                    <div id="habit-challenge-tracker" class="mb-4"></div>
+                    <div id="habit-tracker-dashboard"></div>
+                </div>
+            </section>
+
             <!-- Sections -->
-            <section id="tasks" class="app-section">
+            <section id="tasks" class="app-section hidden">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-700">Task Manager</h2>
                     <button onclick="openTaskModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition"><i class="fas fa-plus mr-2"></i>Add Task</button>
+                </div>
+                <!-- New: Task Filters and Search -->
+                <div class="flex flex-wrap items-center gap-4 mb-4">
+                    <input type="text" id="task-search" placeholder="Search tasks..." class="flex-grow p-2 border rounded-lg">
+                    <select id="task-status-filter" class="p-2 border rounded-lg">
+                        <option value="all">All Statuses</option>
+                        <option value="Not Started">Not Started</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <select id="task-category-filter" class="p-2 border rounded-lg">
+                        <option value="all">All Categories</option>
+                    </select>
                 </div>
                 <div id="task-list" class="space-y-4"></div>
             </section>
@@ -90,9 +412,18 @@
                             <button onclick="openTransactionModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition"><i class="fas fa-plus mr-2"></i>Add Transaction</button>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-white">
-                            <div class="bg-green-500 p-4 rounded-lg shadow"><h3 class="font-bold">Total Income</h3><p id="total-income">$0.00</p></div>
-                            <div class="bg-red-500 p-4 rounded-lg shadow"><h3 class="font-bold">Total Expenses</h3><p id="total-expenses">$0.00</p></div>
-                            <div class="bg-blue-500 p-4 rounded-lg shadow"><h3 class="font-bold">Balance</h3><p id="balance">$0.00</p></div>
+                            <div class="bg-green-500 p-4 rounded-lg shadow">
+                                <h3 class="font-bold">Total Income</h3>
+                                <p id="budget-total-income">$0.00</p>
+                            </div>
+                            <div class="bg-red-500 p-4 rounded-lg shadow">
+                                <h3 class="font-bold">Total Expenses</h3>
+                                <p id="budget-total-expenses">$0.00</p>
+                            </div>
+                            <div class="bg-blue-500 p-4 rounded-lg shadow">
+                                <h3 class="font-bold">Balance</h3>
+                                <p id="budget-balance">$0.00</p>
+                            </div>
                         </div>
                         <!-- Charts -->
                         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
@@ -104,17 +435,22 @@
                     <div id="budget-allocation-tab" class="hidden">
                          <h2 class="text-2xl font-bold text-gray-700 mb-4">Budget Allocation</h2>
                          <div id="allocation-list" class="space-y-3 p-4 rounded-lg"></div>
-                         <button onclick="saveBudgets()" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition">Save Budgets</button>
+                         <button onclick="saveBudgets()" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition">Click here to set your monthly budgets</button>
                     </div>
                 </div>
             </section>
 
-            <section id="notes" class="app-section hidden h-[70vh] relative">
+            <section id="notes" class="app-section hidden">
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-700">Sticky Notes</h2>
                     <div class="flex items-center space-x-2">
                         <div id="color-palette" class="flex space-x-1"></div>
-                        <button onclick="createNote()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-2"></i>Add Note</button>
+                        <!-- Group by Tag Toggle -->
+                        <label class="flex items-center cursor-pointer text-sm font-medium">
+                            <input type="checkbox" id="group-by-tag-toggle" class="mr-2">
+                            Group by Tag
+                        </label>
+                        <button onclick="openNoteModal()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-2"></i>Add Note</button>
                     </div>
                 </div>
                 <div id="notes-container" class="w-full h-full rounded-lg bg-gray-200/50 border-2 border-dashed border-gray-400 relative overflow-auto"></div>
@@ -128,6 +464,12 @@
             <h3 id="task-modal-title" class="text-xl font-bold mb-4">Add New Task</h3>
             <input id="task-id" type="hidden">
             <input id="task-input" type="text" placeholder="Task description..." class="w-full border p-2 rounded mb-2">
+            <select id="task-category" class="w-full border p-2 rounded mb-2"></select>
+            <select id="task-recurrence" class="w-full border p-2 rounded mb-2"></select>
+            <!-- New: Load Template Dropdown -->
+            <select id="task-template-select" class="w-full border p-2 rounded mb-2">
+                <option value="">Load Template...</option>
+            </select>
             <div class="grid grid-cols-2 gap-4 mb-2">
                 <div><label class="font-semibold text-sm">Start Date</label><input id="task-start-date" type="date" class="w-full border p-2 rounded"></div>
                 <div><label class="font-semibold text-sm">Due Date</label><input id="task-due-date" type="date" class="w-full border p-2 rounded"></div>
@@ -137,7 +479,9 @@
             </select>
             <div class="flex justify-end space-x-2">
                 <button onclick="closeModal('task-modal')" class="bg-gray-300 px-4 py-2 rounded-lg">Cancel</button>
-                <button onclick="saveTask()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Save Task</button>
+                <button id="save-task-btn" class="bg-blue-500 text-white px-4 py-2 rounded">Save Task</button>
+                <button id="delete-task-btn" class="bg-red-500 text-white px-4 py-2 rounded ml-2 hidden">Delete Task</button>
+                <button id="save-as-template-btn" class="bg-purple-500 text-white px-4 py-2 rounded ml-2">Save as Template</button>
             </div>
         </div>
     </div>
@@ -155,44 +499,147 @@
         </div>
     </div>
 
+    <!-- New: Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Note Modal -->
+    <div id="note-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h3 id="note-modal-title" class="text-xl font-bold mb-4">Add New Note</h3>
+            <input id="note-id" type="hidden">
+            <textarea id="note-text" class="w-full border p-2 rounded mb-2" rows="4" placeholder="Write your note here..."></textarea>
+            <input id="note-tags" type="text" class="w-full border p-2 rounded mb-4" placeholder="Tags (comma separated)">
+            <!-- Related Notes Section -->
+            <div id="related-notes-section" class="mb-4 hidden">
+                <h4 class="font-semibold text-sm mb-2">Related Notes</h4>
+                <div id="related-notes-list" class="space-y-2"></div>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeModal('note-modal')" class="bg-gray-300 px-4 py-2 rounded-lg">Cancel</button>
+                <button onclick="saveNote()" class="bg-green-600 text-white px-4 py-2 rounded-lg">Save Note</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help & FAQ Section -->
+    <section id="help" class="bg-white rounded-lg shadow p-4 mt-8 max-w-2xl mx-auto">
+      <h2 class="text-lg font-bold mb-2">Help & FAQ</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li><b>How do I add a task?</b> Click the "Add Task" button and fill in the details.</li>
+        <li><b>How do I track my habits?</b> Use the Habit Tracker section to mark your daily progress.</li>
+        <li><b>How do I switch themes?</b> Use the theme switcher in the top-right corner.</li>
+        <li><b>Is my data safe?</b> All your data is stored locally in your browser and never leaves your device.</li>
+        <li><b>Can I export or import my data?</b> Yes! Use the Export/Import buttons in the settings menu.</li>
+        <li><b>How do I use the meditation timer?</b> In the Habit Tracker, click "Start" under Meditate to begin a 10-minute session.</li>
+        <li><b>How do I earn achievement badges?</b> Complete the 30-day habit challenge to unlock the badge!</li>
+      </ul>
+    </section>
+
+    <!-- Tutorial Modal -->
+    <div id="tutorial-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full relative">
+        <button onclick="closeTutorial()" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+        <h2 class="text-xl font-bold mb-4">Quick Start Tutorial</h2>
+        <ol class="list-decimal pl-6 space-y-2 text-gray-700">
+          <li><b>Explore the Dashboard:</b> See your tasks, budget, notes, and habits at a glance.</li>
+          <li><b>Add a Task:</b> Click "Add Task", fill in details, and set due dates or recurrence.</li>
+          <li><b>Track Your Budget:</b> Add income/expenses, set monthly goals, and view charts.</li>
+          <li><b>Take Notes:</b> Use sticky notes, add tags, and search or group by tag.</li>
+          <li><b>Build Habits:</b> Mark your daily water, reading, and meditation progress. Try the meditation timer!</li>
+          <li><b>Switch Themes:</b> Use the theme switcher for light, dark, or custom themes.</li>
+          <li><b>Export/Import Data:</b> Backup or restore your data from the settings menu.</li>
+        </ol>
+        <div class="mt-4 text-right">
+          <button onclick="closeTutorial()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Close</button>
+        </div>
+      </div>
+    </div>
+
     <script>
         // Local Storage Keys
         const STORAGE_KEYS = {
-            TASKS: 'personal_assistant_tasks',
-            TRANSACTIONS: 'personal_assistant_transactions',
-            BUDGETS: 'personal_assistant_budgets',
-            NOTES: 'personal_assistant_notes'
+            TRANSACTIONS: 'transactions',
+            BUDGETS: 'budgets',
+            NOTES: 'notes',
+            TASKS: 'tasks',
+            TASK_TEMPLATES: 'taskTemplates' // New: Key for task templates
         };
 
         // Initialize data
-        let localTasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
-        let localTransactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS) || '[]');
-        let localBudgets = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUDGETS) || '{}');
-        let localNotes = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTES) || '[]');
-        let incomeExpenseChart, categoryExpenseChart;
+        let localTasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS)) || [];
+        let localTransactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS)) || [];
+        let localBudgets = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUDGETS)) || {};
+        let localNotes = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTES)) || [];
+        let localTaskTemplates = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASK_TEMPLATES)) || []; // New: Initialize task templates
+        let incomeExpenseChart, categoryExpenseChart, taskTrendChartInstance, spendingPatternChartInstance;
+
+        console.log('Initial localBudgets on load:', localBudgets); // Debug log for budget persistence
+
+        // 1. Add categories for tasks
+        const taskCategories = ['Work', 'Personal', 'Study', 'Health', 'Home', 'Other'];
+        // New: Recurrence options for tasks
+        const taskRecurrenceOptions = ['None', 'Daily', 'Weekly', 'Monthly'];
 
         // Navigation
-        window.showSection = (id) => {
-            document.querySelectorAll('.app-section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.nav-btn[onclick="showSection('${id}')"]`).classList.add('active');
-        };
+        function showSection(sectionId) {
+          document.getElementById('dashboard').classList.add('hidden');
+          document.getElementById('tasks').classList.add('hidden');
+          document.getElementById('budget').classList.add('hidden');
+          document.getElementById('notes').classList.add('hidden');
+          document.getElementById(sectionId).classList.remove('hidden');
+        }
+        window.showSection = showSection;
 
         // Modal handling
         window.openTaskModal = (taskId = null) => {
             const task = taskId ? localTasks.find(t => t.id === taskId) : null;
             const modal = document.getElementById('task-modal');
             const title = document.getElementById('task-modal-title');
-            
+            const taskCategorySelect = document.getElementById('task-category');
+            const taskRecurrenceSelect = document.getElementById('task-recurrence'); // Get recurrence select
+            const taskTemplateSelect = document.getElementById('task-template-select'); // Get template select
+
+            // Clear and populate category options
+            taskCategorySelect.innerHTML = '';
+            taskCategories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                taskCategorySelect.appendChild(option);
+            });
+
+            // Clear and populate recurrence options
+            taskRecurrenceSelect.innerHTML = '';
+            taskRecurrenceOptions.forEach(optionText => {
+                const option = document.createElement('option');
+                option.value = optionText.toLowerCase();
+                option.textContent = optionText;
+                taskRecurrenceSelect.appendChild(option);
+            });
+
+            // Clear and populate template options
+            taskTemplateSelect.innerHTML = '<option value="">Load Template...</option>'; // Reset and add default
+            localTaskTemplates.forEach(template => {
+                const option = document.createElement('option');
+                option.value = template.id;
+                option.textContent = template.name;
+                taskTemplateSelect.appendChild(option);
+            });
+
             document.getElementById('task-id').value = task ? task.id : '';
             document.getElementById('task-input').value = task ? task.text : '';
             document.getElementById('task-start-date').value = task ? task.startDate : '';
             document.getElementById('task-due-date').value = task ? task.dueDate : '';
             document.getElementById('task-priority').value = task ? task.priority : 'medium';
+            document.getElementById('task-category').value = task ? task.category || 'Other' : 'Other';
+            // Set recurrence value when opening modal
+            taskRecurrenceSelect.value = task ? task.recurrence || 'none' : 'none';
             
             title.textContent = task ? 'Edit Task' : 'Add New Task';
-            modal.classList.replace('hidden', 'flex');
+
+            // Reset template select
+            taskTemplateSelect.value = '';
+            modal.classList.replace('hidden', 'flex'); // Show the modal
         };
 
         window.openTransactionModal = () => {
@@ -206,77 +653,94 @@
 
         // Task Management
         function renderTasks() {
-            const list = document.getElementById('task-list');
-            if (localTasks.length === 0) {
-                list.innerHTML = `<div class="text-center p-8 bg-white rounded-lg shadow-sm">
-                    <p class="text-gray-500">No tasks yet. Add one to get started!</p>
-                </div>`;
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = ''; // Clear current tasks
+
+            const searchText = document.getElementById('task-search').value.toLowerCase();
+            const statusFilter = document.getElementById('task-status-filter').value;
+            const categoryFilter = document.getElementById('task-category-filter').value;
+
+            const filteredTasks = localTasks.filter(task => {
+                const matchesSearch = task.text.toLowerCase().includes(searchText);
+                const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
+                const matchesCategory = categoryFilter === 'all' || task.category === categoryFilter;
+                return matchesSearch && matchesStatus && matchesCategory;
+            });
+
+            if (filteredTasks.length === 0) {
+                taskList.innerHTML = '<p class="text-center text-gray-500">No tasks found matching your criteria.</p>';
                 return;
             }
 
-            const taskPriorities = {
-                high: { color: 'red', icon: 'fa-angles-up' },
-                medium: { color: 'yellow', icon: 'fa-equals' },
-                low: { color: 'green', icon: 'fa-angles-down' }
-            };
-
-            const taskStatuses = {
-                'Not Started': 'bg-gray-200 text-gray-800',
-                'In Progress': 'bg-blue-200 text-blue-800',
-                'Completed': 'bg-green-200 text-green-800'
-            };
-
-            localTasks.sort((a,b) => 
-                (a.status === 'Completed' ? 1 : -1) - (b.status === 'Completed' ? 1 : -1) ||
-                (new Date(a.dueDate) - new Date(b.dueDate))
-            );
-
-            list.innerHTML = localTasks.map(task => {
-                const priority = taskPriorities[task.priority] || taskPriorities.medium;
-                const isOverdue = !task.dueDate ? false : 
-                    (new Date(task.dueDate) < new Date() && task.status !== 'Completed');
-
-                return `
-                    <div class="bg-white p-4 rounded-lg shadow-sm ${task.status === 'Completed' ? 'opacity-50' : ''}">
-                        <div class="flex items-start justify-between">
-                            <p class="font-semibold text-gray-800">${task.text}</p>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="openTaskModal('${task.id}')" class="text-gray-400 hover:text-indigo-600">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="deleteTask('${task.id}')" class="text-gray-400 hover:text-red-500">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+            filteredTasks.sort((a, b) => {
+                const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+                // Sort by priority (High to Low)
+                if (priorityOrder[b.priority] !== priorityOrder[a.priority]) {
+                    return priorityOrder[b.priority] - priorityOrder[a.priority];
+                }
+                // Then by due date (earliest first), incomplete tasks first
+                const aDate = new Date(a.dueDate || '9999-12-31'); // No due date tasks last
+                const bDate = new Date(b.dueDate || '9999-12-31');
+                if (a.status === 'Completed' && b.status !== 'Completed') return 1;
+                if (b.status === 'Completed' && a.status !== 'Completed') return -1;
+                return aDate - bDate;
+            }).forEach(task => {
+                const dueDateStr = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No Due Date';
+                const taskItem = document.createElement('div');
+                taskItem.className = `bg-white p-4 rounded-lg shadow flex items-center justify-between ${task.status === 'Completed' ? 'opacity-60' : ''}`;
+                taskItem.innerHTML = `
+                    <div class="flex items-center flex-grow">
+                        <input type="checkbox" 
+                               class="form-checkbox h-5 w-5 text-indigo-600 rounded-md" 
+                               onchange="updateTaskStatus('${task.id}', this.checked ? 'Completed' : 'Not Started')" 
+                               ${task.status === 'Completed' ? 'checked' : ''}>
+                        <div class="ml-4 flex-grow">
+                            <h4 class="font-semibold text-lg ${task.status === 'Completed' ? 'line-through text-gray-500' : 'text-gray-800'}">${task.text}</h4>
+                            <p class="text-sm text-gray-600">Category: ${task.category || 'N/A'}</p>
+                            <p class="text-sm text-gray-600">Priority: <span class="${task.priority === 'high' ? 'text-red-500' : task.priority === 'medium' ? 'text-yellow-600' : 'text-green-500'}">${task.priority}</span></p>
+                            <p class="text-sm text-gray-600">Due: ${dueDateStr}</p>
+                            ${task.recurrence && task.recurrence !== 'none' ? `<p class="text-xs text-indigo-500">Recurs: ${task.recurrence}</p>` : ''}
+                            ${task.completionComment ? `<p class="text-xs text-gray-500 mt-1">Comment: ${task.completionComment}</p>` : ''}
                         </div>
-                        <div class="flex items-center justify-between mt-3 text-sm">
-                            <div class="flex items-center space-x-4">
-                                <span class="px-2 py-1 rounded-full text-xs font-semibold ${taskStatuses[task.status]}">
-                                    ${task.status}
-                                </span>
-                                <span class="text-${priority.color}-500 font-semibold">
-                                    <i class="fas ${priority.icon} mr-1"></i> ${task.priority}
-                                </span>
-                            </div>
-                            <div class="flex items-center space-x-1 text-gray-500 ${isOverdue ? 'text-red-500 font-bold' : ''}">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}</span>
-                            </div>
-                        </div>
-                        <select onchange="updateTaskStatus('${task.id}', this.value)" 
-                                class="mt-2 w-full border-gray-200 rounded-md text-sm p-1">
-                            ${Object.keys(taskStatuses).map(s => 
-                                `<option value="${s}" ${task.status === s ? 'selected' : ''}>${s}</option>`
-                            ).join('')}
-                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openTaskModal('${task.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteTask('${task.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 `;
-            }).join('');
+                taskList.appendChild(taskItem);
+            });
         }
 
         // Budget Management
-        const expenseCategories = ['Groceries', 'Transport', 'Bills', 'Entertainment', 'Shopping', 'Health', 'Other'];
-        const incomeCategories = ['Salary', 'Investment', 'Part-time', 'Gift', 'Other'];
+        const expenseCategories = [
+            'Groceries',
+            'Transport',
+            'Bills',
+            'Entertainment',
+            'Shopping',
+            'Health',
+            'Education',
+            'Housing',
+            'Utilities',
+            'Personal Care',
+            'Travel',
+            'Gifts',
+            'Investments',
+            'Savings',
+            'Other'
+        ];
+
+        const incomeCategories = [
+            'Salary',
+            'Investment',
+            'Part-time',
+            'Gift',
+            'Business',
+            'Rental',
+            'Freelance',
+            'Other'
+        ];
 
         window.updateTransactionCategories = () => {
             const type = document.getElementById('trans-type').value;
@@ -288,14 +752,15 @@
         };
 
         function renderBudget() {
-            const income = localTransactions.filter(t => t.type === 'income')
-                .reduce((s,t) => s + t.amount, 0);
-            const expenses = localTransactions.filter(t => t.type === 'expense')
-                .reduce((s,t) => s + t.amount, 0);
-
-            document.getElementById('total-income').textContent = `$${income.toFixed(2)}`;
-            document.getElementById('total-expenses').textContent = `$${expenses.toFixed(2)}`;
-            document.getElementById('balance').textContent = `$${(income - expenses).toFixed(2)}`;
+            const income = localTransactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expenses = localTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            // Budget section
+            const budgetIncome = document.getElementById('budget-total-income');
+            const budgetExpenses = document.getElementById('budget-total-expenses');
+            const budgetBalance = document.getElementById('budget-balance');
+            if (budgetIncome) budgetIncome.textContent = `$${income.toFixed(2)}`;
+            if (budgetExpenses) budgetExpenses.textContent = `$${expenses.toFixed(2)}`;
+            if (budgetBalance) budgetBalance.textContent = `$${(income - expenses).toFixed(2)}`;
 
             renderTransactionList();
             renderCharts(income, expenses);
@@ -362,13 +827,11 @@
             // Bar Chart: Expenses by Category
             const categoryTotals = {};
             expenseCategories.forEach(cat => categoryTotals[cat] = 0);
-            localTransactions
-                .filter(t => t.type === 'expense')
-                .forEach(t => {
-                    if(categoryTotals[t.category] !== undefined) {
-                        categoryTotals[t.category] += t.amount;
-                    }
-                });
+            localTransactions.filter(t => t.type === 'expense').forEach(t => {
+                if(categoryTotals[t.category] !== undefined) {
+                    categoryTotals[t.category] += t.amount;
+                }
+            });
 
             const barCtx = document.getElementById('categoryExpenseChart').getContext('2d');
             categoryExpenseChart = new Chart(barCtx, {
@@ -378,7 +841,7 @@
                     datasets: [{
                         label: 'Amount Spent',
                         data: Object.values(categoryTotals),
-                        backgroundColor: '#6366F1',
+                        backgroundColor: '#4338ca',
                     }]
                 },
                 options: {
@@ -409,6 +872,7 @@
             } else {
                 document.getElementById('budget-tracker-tab').classList.add('hidden');
                 document.getElementById('budget-allocation-tab').classList.remove('hidden');
+                renderBudgetAllocation();
             }
         };
 
@@ -420,7 +884,7 @@
         function renderNote(note) {
             const container = document.getElementById('notes-container');
             const el = document.createElement('div');
-            el.className = 'note absolute p-4 rounded-lg shadow-md';
+            el.className = 'note absolute p-4 pb-10 rounded-lg shadow-md'; // Add extra bottom padding
             el.id = note.id;
             el.style.cssText = `
                 left:${note.position.x};
@@ -431,12 +895,20 @@
                 background-color:${note.color};
                 resize:both;
                 overflow:hidden;
+                position:absolute;
             `;
+            // Render tags as chips, absolutely positioned at the bottom
+            const tagsHtml = note.tags && note.tags.length > 0
+                ? `<div style="position:absolute;left:0;bottom:0;width:100%;padding:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem;background:transparent;z-index:2;">${note.tags.map(tag => `<span class='bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full'>${tag}</span>`).join('')}</div>`
+                : '';
             el.innerHTML = `
                 <div class="note-header"></div>
                 <button class="delete-btn absolute top-2 right-2 bg-black/20 text-white w-5 h-5 rounded-full text-xs"
                         onclick="deleteNote('${note.id}')">X</button>
-                <textarea>${note.text}</textarea>
+                <button class="absolute top-2 right-8 bg-gray-200 text-gray-700 w-5 h-5 rounded-full text-xs flex items-center justify-center hover:bg-gray-300" title="Edit Note"
+                        onclick="openNoteModal('${note.id}')"><i class="fas fa-pen"></i></button>
+                <textarea style="background:transparent;width:100%;height:calc(100% - 30px);border:none;resize:none;outline:none;">${note.text}</textarea>
+                ${tagsHtml}
             `;
             container.appendChild(el);
             enableDragAndResize(el, note.id);
@@ -446,23 +918,50 @@
             const header = el.querySelector('.note-header');
             const textarea = el.querySelector('textarea');
 
+            let isDragging = false;
+            let ox, oy; // Offset of mouse from top-left of element
+            let currentMouseX, currentMouseY; // Live updated mouse position
+            let animationFrameId = null; // Store requestAnimationFrame ID
+
+            const updateNotePosition = () => {
+                if (isDragging) {
+                    el.style.left = currentMouseX - ox + 'px';
+                    el.style.top = currentMouseY - oy + 'px';
+                    animationFrameId = requestAnimationFrame(updateNotePosition);
+                } else {
+                    animationFrameId = null; // Reset when dragging stops
+                }
+            };
+
             header.onmousedown = e => {
                 e.preventDefault();
-                let isDragging = true;
-                el.style.zIndex = zIndexCounter++;
-                let ox = e.clientX - el.offsetLeft,
-                    oy = e.clientY - el.offsetTop;
+                isDragging = true;
+                el.style.zIndex = zIndexCounter++; // Bring note to front
+
+                ox = e.clientX - el.offsetLeft;
+                oy = e.clientY - el.offsetTop;
+
+                currentMouseX = e.clientX; // Initialize current mouse position
+                currentMouseY = e.clientY; // Initialize current mouse position
+
+                // Start the animation loop if not already running
+                if (animationFrameId === null) {
+                    animationFrameId = requestAnimationFrame(updateNotePosition);
+                }
 
                 document.onmousemove = e => {
-                    if(!isDragging) return;
-                    el.style.left = e.clientX - ox + 'px';
-                    el.style.top = e.clientY - oy + 'px';
+                    currentMouseX = e.clientX;
+                    currentMouseY = e.clientY;
                 };
 
                 document.onmouseup = () => {
                     if (isDragging) {
                         isDragging = false;
-                        document.onmousemove = document.onmouseup = null;
+                        cancelAnimationFrame(animationFrameId); // Stop the animation loop
+                        animationFrameId = null; // Reset ID
+                        document.onmousemove = null; // Clear event listener
+                        document.onmouseup = null;   // Clear event listener
+                        
                         const note = localNotes.find(n => n.id === id);
                         if (note) {
                             note.position = { x: el.style.left, y: el.style.top };
@@ -473,6 +972,7 @@
                 };
             };
 
+            // Existing debounce logic for textarea input and resize observer
             let debounceTimer;
             textarea.oninput = () => {
                 clearTimeout(debounceTimer);
@@ -490,7 +990,7 @@
                 debounceTimer = setTimeout(() => {
                     const note = localNotes.find(n => n.id === id);
                     if (note) {
-                        note.size = { width: el.style.width, height: el.style.height };
+                        note.size = { width: el.style.width || '220px', height: el.style.height || '220px' };
                         localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
                     }
                 }, 500);
@@ -511,21 +1011,24 @@
             if (user === 'admin' && pass === 'admin') {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                document.getElementById('welcome-message').textContent = 'Welcome Admin...';
+                document.getElementById('welcome-message').textContent = 'Welcome Mani Ramaiah...';
                 loadAllData();
             } else {
                 const errorEl = document.getElementById('login-error');
                 errorEl.textContent = 'Invalid credentials. Please try again.';
                 errorEl.classList.remove('hidden');
+                showToast('Invalid credentials. Please try again.', 'error');
             }
         };
 
         // Load all data
         function loadAllData() {
+            console.log('loadAllData called.'); // Debug log B
             loadTasks();
-            loadBudgets();
             loadTransactions();
             loadNotes();
+            renderBudgetAllocation();
+            updateDashboard();
             getAIRecommendation();
         }
 
@@ -535,13 +1038,15 @@
             const taskData = {
                 id: id || Date.now().toString(),
                 text: document.getElementById('task-input').value,
+                category: document.getElementById('task-category').value,
                 priority: document.getElementById('task-priority').value,
                 startDate: document.getElementById('task-start-date').value,
                 dueDate: document.getElementById('task-due-date').value,
                 status: id ? localTasks.find(t => t.id === id)?.status || 'Not Started' : 'Not Started',
-                createdAt: id ? localTasks.find(t => t.id === id)?.createdAt : Date.now()
+                createdAt: id ? localTasks.find(t => t.id === id)?.createdAt : Date.now(),
+                recurrence: document.getElementById('task-recurrence').value
             };
-
+            console.log('Saving task with category:', taskData.category); // Debug log
             if (!taskData.text.trim()) return;
 
             if (id) {
@@ -554,14 +1059,49 @@
             localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(localTasks));
             closeModal('task-modal');
             renderTasks();
+            updateDashboard();
+            showToast(`Task '${taskData.text}' added successfully!`, 'success');
         };
 
         window.updateTaskStatus = (id, status) => {
-            const task = localTasks.find(t => t.id === id);
-            if (task) {
+            const taskIndex = localTasks.findIndex(t => t.id === id);
+            if (taskIndex !== -1) {
+                const task = localTasks[taskIndex];
                 task.status = status;
+
+                // Handle recurring tasks when marked as completed
+                if (status === 'Completed' && task.recurrence && task.recurrence !== 'none') {
+                    const originalDueDate = new Date(task.dueDate);
+                    let newDueDate = new Date(originalDueDate);
+                    let newStartDate = task.startDate ? new Date(task.startDate) : null;
+
+                    if (task.recurrence === 'daily') {
+                        newDueDate.setDate(newDueDate.getDate() + 1);
+                        if (newStartDate) newStartDate.setDate(newStartDate.getDate() + 1);
+                    } else if (task.recurrence === 'weekly') {
+                        newDueDate.setDate(newDueDate.getDate() + 7);
+                        if (newStartDate) newStartDate.setDate(newStartDate.getDate() + 7);
+                    } else if (task.recurrence === 'monthly') {
+                        newDueDate.setMonth(newDueDate.getMonth() + 1);
+                        if (newStartDate) newStartDate.setMonth(newStartDate.getMonth() + 1);
+                    }
+
+                    const newTask = {
+                        ...task,
+                        id: Date.now().toString(), // New unique ID
+                        dueDate: newDueDate.toISOString().split('T')[0],
+                        startDate: newStartDate ? newStartDate.toISOString().split('T')[0] : '',
+                        status: 'Not Started', // New instance is not started
+                        createdAt: Date.now(),
+                        completionComment: '' // Clear comment for new instance
+                    };
+                    localTasks.push(newTask);
+                    showToast(`Recurring task '${task.text}' created for next period.`, 'success');
+                }
+
                 localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(localTasks));
                 renderTasks();
+                updateDashboard(); // Ensure dashboard reflects changes
             }
         };
 
@@ -569,6 +1109,7 @@
             localTasks = localTasks.filter(t => t.id !== id);
             localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(localTasks));
             renderTasks();
+            updateDashboard(); // Refresh dashboard after task deletion
         };
 
         function loadTasks() {
@@ -585,17 +1126,24 @@
                 category: document.getElementById('trans-category').value,
                 createdAt: Date.now()
             };
-
-            if (!transaction.description.trim() || isNaN(transaction.amount) || transaction.amount <= 0) return;
-
+            if (!transaction.description.trim() || isNaN(transaction.amount) || transaction.amount <= 0) {
+                showToast('Please enter a valid description and amount.', 'error');
+                return;
+            }
             localTransactions.push(transaction);
             localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(localTransactions));
-            
             document.getElementById('trans-desc').value = '';
             document.getElementById('trans-amount').value = '';
             closeModal('transaction-modal');
             renderBudget();
+            updateDashboard();
         };
+
+        function loadTransactions() {
+            localTransactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS) || '[]');
+            renderBudget();
+            updateDashboard();
+        }
 
         window.saveBudgets = () => {
             const newBudgets = {};
@@ -610,7 +1158,116 @@
             localBudgets = newBudgets;
             localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(localBudgets));
             renderBudgetAllocation();
+            updateDashboard();
+            showToast('Budget goals updated successfully!', 'success');
         };
+
+        function renderBudgetAllocation() {
+            const allocationList = document.getElementById('allocation-list');
+            allocationList.innerHTML = expenseCategories.map(cat => {
+                const spent = localTransactions
+                    .filter(t => t.category === cat && t.type === 'expense')
+                    .reduce((s,t) => s + t.amount, 0);
+                const budget = localBudgets[cat] || 0;
+                const progress = budget > 0 ? (spent / budget * 100) : 0;
+                const status = progress > 100 ? 'text-red-500' : progress > 80 ? 'text-yellow-500' : 'text-green-500';
+
+                return `
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="font-semibold">${cat}</label>
+                            <div class="flex items-center">
+                                <span class="text-sm mr-2">$</span>
+                                <input type="number" 
+                                       data-category="${cat}" 
+                                       value="${budget || ''}" 
+                                       placeholder="0" 
+                                       class="w-24 border p-1 rounded text-right"
+                                       min="0"
+                                       step="0.01">
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-indigo-600 h-2.5 rounded-full" 
+                                 style="width: ${Math.min(progress, 100)}%"></div>
+                        </div>
+                        <div class="flex justify-between text-sm mt-1">
+                            <span class="${status}">$${spent.toFixed(2)} spent</span>
+                            <span class="text-gray-600">Budget: $${budget.toFixed(2)}</span>
+                        </div>
+                        ${progress > 100 ? 
+                            `<p class="text-red-500 text-xs mt-1">Over budget by $${(spent - budget).toFixed(2)}</p>` : 
+                            progress > 80 ? 
+                            `<p class="text-yellow-500 text-xs mt-1">Close to budget limit</p>` : 
+                            ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Add monthly budget goal
+            const monthlyGoal = localBudgets.monthlyGoal || 0;
+            allocationList.innerHTML += `
+                <hr class="my-4">
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-semibold">Monthly Budget Goal</label>
+                        <div class="flex items-center">
+                            <span class="text-sm mr-2">$</span>
+                            <input type="number" 
+                                   data-category="monthlyGoal" 
+                                   value="${monthlyGoal}" 
+                                   placeholder="0" 
+                                   class="w-24 border p-1 rounded text-right"
+                                   min="0"
+                                   step="0.01">
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">Set your total monthly budget goal</p>
+                </div>
+            `;
+        }
+
+        function updateBudgetOverview() {
+            const income = localTransactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expenses = localTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            // Dashboard section
+            const dashIncome = document.getElementById('dashboard-total-income');
+            const dashExpenses = document.getElementById('dashboard-total-expenses');
+            const dashBalance = document.getElementById('dashboard-balance');
+            if (dashIncome) dashIncome.textContent = `$${income.toFixed(2)}`;
+            if (dashExpenses) dashExpenses.textContent = `$${expenses.toFixed(2)}`;
+            if (dashBalance) dashBalance.textContent = `$${(income - expenses).toFixed(2)}`;
+
+            // Calculate budget progress using monthly goal
+            const monthlyGoal = localBudgets.monthlyGoal || 0;
+            const progress = monthlyGoal > 0 ? Math.min((expenses / monthlyGoal) * 100, 100) : 0;
+            const progressBar = document.getElementById('budget-progress');
+            progressBar.style.width = `${progress}%`;
+            
+            // Update progress bar color based on percentage
+            if (progress > 100) {
+                progressBar.className = 'bg-red-600 h-2.5 rounded-full';
+            } else if (progress > 80) {
+                progressBar.className = 'bg-yellow-600 h-2.5 rounded-full';
+            } else {
+                progressBar.className = 'bg-green-600 h-2.5 rounded-full';
+            }
+            // Display monthly goal summary text
+            const monthlyGoalSummary = document.getElementById('monthly-goal-summary');
+            if (monthlyGoalSummary) {
+                if (monthlyGoal > 0) {
+                    const remaining = monthlyGoal - expenses;
+                    if (remaining >= 0) {
+                        monthlyGoalSummary.textContent = `$${expenses.toFixed(2)} spent out of $${monthlyGoal.toFixed(2)} goal ($${remaining.toFixed(2)} remaining)`;
+                    } else {
+                        monthlyGoalSummary.textContent = `$${expenses.toFixed(2)} spent (OVER by $${Math.abs(remaining).toFixed(2)})`;
+                        monthlyGoalSummary.classList.add('text-red-500'); // Highlight if over budget
+                    }
+                } else {
+                    monthlyGoalSummary.textContent = 'Set a monthly budget goal in Allocation tab.';
+                }
+            }
+        }
 
         // Notes Management
         window.createNote = () => {
@@ -650,13 +1307,906 @@
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded. Starting app initialization.'); // Debug log A
             // Populate note color palette
             const palette = document.getElementById('color-palette');
             palette.innerHTML = noteColors.map(c => 
                 `<button class="w-6 h-6 rounded-full border-2 border-white focus:ring-2 focus:ring-indigo-500" 
                 style="background-color:${c};" onclick="window.selectedColor='${c}';"></button>`
             ).join('');
+
+            // Event Listeners
+            document.getElementById('save-task-btn').addEventListener('click', saveTask);
+            document.getElementById('delete-task-btn').addEventListener('click', () => {
+                const taskId = document.getElementById('task-id').value;
+                if (taskId) deleteTask(taskId);
+                closeModal('task-modal');
+            });
+            document.getElementById('save-as-template-btn').addEventListener('click', saveTaskAsTemplate);
+            document.getElementById('task-template-select').addEventListener('change', applyTaskTemplate);
+
+            // New: Event listeners for task filters and search
+            const taskSearchInput = document.getElementById('task-search');
+            const taskStatusFilter = document.getElementById('task-status-filter');
+            const taskCategoryFilter = document.getElementById('task-category-filter');
+
+            taskSearchInput.addEventListener('input', renderTasks);
+            taskStatusFilter.addEventListener('change', renderTasks);
+            taskCategoryFilter.addEventListener('change', renderTasks);
+
+            // Populate category filter dropdown
+            taskCategories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                taskCategoryFilter.appendChild(option);
+            });
+
+            loadAllData(); // Initial data load
+
+            // New: Dark Mode Toggle
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const darkModeIcon = document.getElementById('dark-mode-icon');
+            darkModeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                changeTheme(newTheme);
+                localStorage.setItem('preferred-theme', newTheme);
+                darkModeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            });
+            // Set correct icon on load
+            const initialTheme = document.documentElement.getAttribute('data-theme');
+            darkModeIcon.textContent = initialTheme === 'dark' ? '☀️' : '🌙';
+
+            // Group by Tag toggle event
+            document.getElementById('group-by-tag-toggle').addEventListener('change', renderNotes);
         });
+
+        // New: Save Task as Template function
+        window.saveTaskAsTemplate = () => {
+            const id = document.getElementById('task-id').value;
+            const text = document.getElementById('task-input').value;
+            const category = document.getElementById('task-category').value;
+            const priority = document.getElementById('task-priority').value;
+            const startDate = document.getElementById('task-start-date').value;
+            const dueDate = document.getElementById('task-due-date').value;
+            const recurrence = document.getElementById('task-recurrence').value;
+
+            if (!text) {
+                showToast('Task description cannot be empty to save as template.', 'error');
+                return;
+            }
+
+            const templateId = Date.now().toString();
+            const templateName = prompt("Enter a name for this task template:", text);
+
+            if (templateName) {
+                const newTemplate = {
+                    id: templateId,
+                    name: templateName,
+                    text: text,
+                    category: category,
+                    priority: priority,
+                    startDate: startDate,
+                    dueDate: dueDate,
+                    recurrence: recurrence,
+                };
+
+                localTaskTemplates.push(newTemplate);
+                localStorage.setItem(STORAGE_KEYS.TASK_TEMPLATES, JSON.stringify(localTaskTemplates));
+                showToast(`Task template '${templateName}' saved successfully!`, 'success');
+                closeModal('task-modal'); // Close modal after saving template
+            } else {
+                showToast('Template name cannot be empty.', 'error');
+            }
+        };
+
+        // New: Apply Task Template function
+        window.applyTaskTemplate = () => {
+            const templateId = document.getElementById('task-template-select').value;
+            const template = localTaskTemplates.find(t => t.id === templateId);
+
+            if (template) {
+                document.getElementById('task-input').value = template.text;
+                document.getElementById('task-category').value = template.category || 'Other';
+                document.getElementById('task-priority').value = template.priority || 'medium';
+                document.getElementById('task-start-date').value = template.startDate || '';
+                document.getElementById('task-due-date').value = template.dueDate || '';
+                document.getElementById('task-recurrence').value = template.recurrence || 'none';
+                showToast(`Template '${template.name}' applied.`, 'info');
+            }
+        };
+
+        // Add theme management
+        function changeTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('preferred-theme', theme);
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.theme === theme);
+            });
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('preferred-theme') || 'light';
+        changeTheme(savedTheme);
+
+        // Add dashboard-specific functions
+        function updateDashboard() {
+            console.log('updateDashboard called.'); // Debug log C
+            updateTaskStats();
+            updateBudgetOverview();
+            updateRecentNotes();
+            updateAchievements();
+            updateCharts();
+            updateUpcomingTasks();
+            generateSmartSuggestions(); // Call smart suggestions
+            checkOverdueTasks(); // New: Check for overdue tasks
+            generateSpendingRecommendations(); // New: Spending recommendations
+        }
+
+        function updateTaskStats() {
+            const totalTasks = localTasks.length;
+            const completedTasks = localTasks.filter(t => t.status === 'Completed').length;
+            const streak = calculateStreak();
+
+            document.getElementById('dashboard-total-tasks').textContent = totalTasks;
+            document.getElementById('dashboard-completed-tasks').textContent = completedTasks;
+            document.getElementById('streak-count').textContent = streak;
+        }
+
+        function calculateStreak() {
+            // Calculate the number of consecutive days (ending today) with at least one completed task
+            const completed = localTasks.filter(t => t.status === 'Completed' && t.dueDate);
+            if (completed.length === 0) return 0;
+            // Get unique completion dates
+            const dates = [...new Set(completed.map(t => (new Date(t.dueDate)).toDateString()))].sort((a, b) => new Date(b) - new Date(a));
+            let streak = 0;
+            let current = new Date();
+            for (let i = 0; i < dates.length; i++) {
+                if ((new Date(dates[i])).toDateString() === current.toDateString()) {
+                    streak++;
+                    current.setDate(current.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            return streak;
+        }
+
+        function updateRecentNotes() {
+            const recentNotes = localNotes
+                .sort((a,b) => b.createdAt - a.createdAt)
+                .slice(0, 3);
+
+            const container = document.getElementById('recent-notes');
+            if (recentNotes.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500">No recent notes</p>';
+                return;
+            }
+
+            container.innerHTML = recentNotes.map(note => {
+                let dateStr = '';
+                if (note.createdAt && !isNaN(note.createdAt)) {
+                    const d = new Date(note.createdAt);
+                    if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString();
+                }
+                return `
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm truncate">${note.text || 'Empty note'}</p>
+                        <span class="text-xs text-gray-500">
+                            ${dateStr || ''}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateAchievements() {
+            // Implement achievements logic
+            const streak = calculateStreak();
+            const balance = localTransactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0) - localTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            const achievements = [
+                { icon: 'fa-trophy', text: 'Complete your first task', earned: localTasks.some(t => t.status === 'Completed') },
+                { icon: 'fa-fire', text: '3-day streak', earned: streak >= 3 },
+                { icon: 'fa-piggy-bank', text: 'Save $100', earned: balance >= 100 }
+            ];
+            const container = document.getElementById('achievements');
+            container.innerHTML = achievements.map(achievement => `
+                <div class="flex items-center gap-2 ${achievement.earned ? 'text-gray-800 achievement-earned' : 'text-gray-400'}">
+                    <i class="fas ${achievement.icon} ${achievement.earned ? 'text-yellow-500' : ''}"></i>
+                    <span class="text-sm">${achievement.text}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateCharts() {
+            // Destroy existing chart instances before creating new ones
+            if (taskTrendChartInstance) taskTrendChartInstance.destroy();
+            if (spendingPatternChartInstance) spendingPatternChartInstance.destroy();
+
+            // Task completion trend chart (dynamic)
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const completedPerDay = Array(7).fill(0);
+            localTasks.forEach(t => {
+                if (t.status === 'Completed' && t.dueDate) {
+                    const d = new Date(t.dueDate);
+                    completedPerDay[d.getDay()]++;
+                }
+            });
+            const taskCtx = document.getElementById('taskTrendChart').getContext('2d');
+            taskTrendChartInstance = new Chart(taskCtx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Tasks Completed',
+                        data: completedPerDay,
+                        borderColor: '#4338ca',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    },
+                    animation: {
+                        duration: 1000, // Duration in milliseconds
+                        easing: 'easeOutQuart' // Easing function
+                    }
+                }
+            });
+            // Spending pattern chart (dynamic)
+            const spendingCtx = document.getElementById('spendingPatternChart').getContext('2d');
+            const expenseTotals = {};
+            expenseCategories.forEach(cat => expenseTotals[cat] = 0);
+            localTransactions.filter(t => t.type === 'expense').forEach(t => {
+                if (expenseTotals[t.category] !== undefined) expenseTotals[t.category] += t.amount;
+            });
+            spendingPatternChartInstance = new Chart(spendingCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(expenseTotals),
+                    datasets: [{
+                        label: 'Spending',
+                        data: Object.values(expenseTotals),
+                        backgroundColor: '#4338ca'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    },
+                    animation: {
+                        duration: 1000, // Duration in milliseconds
+                        easing: 'easeOutQuart' // Easing function
+                    }
+                }
+            });
+        }
+
+        function updateUpcomingTasks() {
+            const upcomingTasks = localTasks
+                .filter(t => t.status !== 'Completed' && t.dueDate)
+                .sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate))
+                .slice(0, 5);
+
+            const container = document.getElementById('upcoming-tasks');
+            if (upcomingTasks.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500">No upcoming tasks</p>';
+                return;
+            }
+
+            container.innerHTML = upcomingTasks.map(task => `
+                <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" class="rounded text-indigo-600" 
+                               onchange="updateTaskStatus('${task.id}', this.checked ? 'Completed' : 'Not Started')">
+                        <span class="text-sm">${task.text}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">
+                            ${new Date(task.dueDate).toLocaleDateString()}
+                        </span>
+                        <button onclick="markTaskAsDoneWithComment('${task.id}')" 
+                                class="bg-indigo-500 text-white text-xs px-2 py-1 rounded hover:bg-indigo-600 transition">
+                            Mark as Done
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // New function to mark task as done with comment from dashboard
+        window.markTaskAsDoneWithComment = (id) => {
+            const comment = prompt('Enter a comment for completing this task (optional):');
+            const taskIndex = localTasks.findIndex(t => t.id === id);
+            if (taskIndex !== -1) {
+                localTasks[taskIndex].status = 'Completed';
+                localTasks[taskIndex].completionComment = comment;
+                localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(localTasks));
+                updateDashboard(); // Refresh the dashboard
+                renderTasks(); // Also refresh the main task list
+            }
+        };
+
+        // Function to show toast messages
+        let toastTimeout;
+        window.showToast = (message, type = 'info', duration = 7000) => {
+            console.log('showToast called with message:', message, 'type:', type, 'duration:', duration); // Debug log 1
+            const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                console.error('Toast container not found!'); // Debug log 2
+                return;
+            }
+            console.log('Toast container found:', toastContainer); // Debug log 3
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            console.log('Toast element created and appended:', toast); // Debug log 4
+
+            setTimeout(() => {
+                toast.classList.add('show');
+                console.log('Toast added show class.'); // Debug log 5
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => {
+                    toast.remove();
+                    console.log('Toast removed from DOM.'); // Debug log 6
+                });
+                console.log('Toast remove initiated.'); // Debug log 7
+            }, duration);
+        };
+
+        // 1. Add file:// warning for localStorage issues
+        if (window.location.protocol === 'file:') {
+            showToast('Warning: You are running this app from a file:// URL. Data may not persist. Use a local web server for best results.', 'warning', 7000);
+        }
+
+        // New: Smart Suggestions Logic
+        function generateSmartSuggestions() {
+            const taskCountsByCategory = {};
+            localTasks.forEach(task => {
+                if (task.category) {
+                    taskCountsByCategory[task.category] = (taskCountsByCategory[task.category] || 0) + 1;
+                }
+            });
+
+            const sortedCategories = Object.entries(taskCountsByCategory).sort(([, a], [, b]) => b - a);
+            const topCategories = sortedCategories.slice(0, 3).map(([category]) => category);
+
+            const suggestionsList = document.getElementById('smart-suggestions-list');
+            suggestionsList.innerHTML = '';
+
+            // 1. Urgent tasks (overdue, due today, due tomorrow)
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            const urgentTasks = localTasks.filter(task => {
+                if (task.status === 'Completed' || !task.dueDate) return false;
+                const due = new Date(task.dueDate);
+                due.setHours(0, 0, 0, 0);
+                return due < today || due.getTime() === today.getTime() || due.getTime() === tomorrow.getTime();
+            });
+            urgentTasks.forEach(task => {
+                let urgency = '';
+                const due = new Date(task.dueDate);
+                due.setHours(0, 0, 0, 0);
+                if (due < today) urgency = 'Overdue';
+                else if (due.getTime() === today.getTime()) urgency = 'Due Today';
+                else urgency = 'Due Tomorrow';
+                const chip = document.createElement('span');
+                chip.className = 'bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full cursor-pointer hover:bg-red-200';
+                chip.textContent = `High Priority: ${task.text} (${urgency})`;
+                chip.onclick = () => {
+                    openTaskModal(task.id);
+                    document.getElementById('task-priority').value = 'high';
+                    showToast(`Marked '${task.text}' as high priority.`, 'info');
+                };
+                suggestionsList.appendChild(chip);
+            });
+
+            // 2. Tasks often completed late (by text)
+            const completedTasks = localTasks.filter(t => t.status === 'Completed' && t.dueDate);
+            const lateCounts = {};
+            completedTasks.forEach(t => {
+                const due = new Date(t.dueDate);
+                const completedDate = new Date(t.createdAt);
+                if (completedDate > due) {
+                    lateCounts[t.text] = (lateCounts[t.text] || 0) + 1;
+                }
+            });
+            Object.entries(lateCounts).forEach(([text, count]) => {
+                if (count >= 2) { // Only suggest if often late
+                    const chip = document.createElement('span');
+                    chip.className = 'bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full cursor-pointer hover:bg-yellow-200';
+                    chip.textContent = `You often complete '${text}' late. Try prioritizing it.`;
+                    chip.onclick = () => {
+                        openTaskModal(null);
+                        document.getElementById('task-input').value = text;
+                        document.getElementById('task-priority').value = 'high';
+                        showToast(`Suggested '${text}' as high priority.`, 'info');
+                    };
+                    suggestionsList.appendChild(chip);
+                }
+            });
+
+            // 3. Top categories (as before, but lower priority)
+            if (topCategories.length === 0 && suggestionsList.innerHTML === '') {
+                suggestionsList.innerHTML = '<p class="text-gray-500 text-sm">Add some tasks to get smart suggestions!</p>';
+                return;
+            }
+            topCategories.forEach(category => {
+                let suggestionText;
+                switch (category.toLowerCase()) {
+                    case 'work':
+                        suggestionText = 'Review Work Tasks';
+                        break;
+                    case 'personal':
+                        suggestionText = 'Plan Personal Errands';
+                        break;
+                    case 'study':
+                        suggestionText = 'Schedule Study Session';
+                        break;
+                    case 'health':
+                        suggestionText = 'Log Daily Health Goal';
+                        break;
+                    case 'home':
+                        suggestionText = 'Organize Home Chores';
+                        break;
+                    default:
+                        suggestionText = `Explore ${category} Tasks`;
+                }
+                const suggestionChip = document.createElement('span');
+                suggestionChip.className = 'bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full cursor-pointer hover:bg-blue-200';
+                suggestionChip.textContent = suggestionText;
+                suggestionChip.onclick = () => {
+                    openTaskModal(null);
+                    document.getElementById('task-input').value = suggestionText;
+                    document.getElementById('task-category').value = category;
+                    showToast(`Suggested task '${suggestionText}' loaded.`, 'info');
+                };
+                suggestionsList.appendChild(suggestionChip);
+            });
+        }
+
+        // New: Function to check and display overdue tasks
+        function checkOverdueTasks() {
+            console.log('checkOverdueTasks called.'); // Debug log D
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize to start of today
+
+            const overdueTasks = localTasks.filter(task => {
+                if (task.status === 'Completed' || !task.dueDate) return false;
+                const dueDate = new Date(task.dueDate);
+                dueDate.setHours(0, 0, 0, 0);
+                return dueDate < today;
+            });
+
+            if (overdueTasks.length > 0) {
+                overdueTasks.forEach(task => {
+                    showToast(`Overdue: '${task.text}' (Due: ${new Date(task.dueDate).toLocaleDateString()})`, 'error', 0); // 0 means no auto-hide
+                });
+            }
+        }
+
+        // New: Spending Recommendations Logic
+        function generateSpendingRecommendations() {
+            const recommendationsList = document.getElementById('spending-recommendations-list');
+            recommendationsList.innerHTML = '';
+            let hasRecommendation = false;
+            expenseCategories.forEach(cat => {
+                const spent = localTransactions
+                    .filter(t => t.category === cat && t.type === 'expense')
+                    .reduce((s, t) => s + t.amount, 0);
+                const budget = localBudgets[cat] || 0;
+                if (budget > 0) {
+                    const percent = spent / budget;
+                    if (percent > 1) {
+                        hasRecommendation = true;
+                        const over = (spent - budget).toFixed(2);
+                        const rec = document.createElement('div');
+                        rec.className = 'bg-red-100 text-red-800 px-3 py-2 rounded';
+                        rec.textContent = `You are OVER budget in ${cat} by $${over}. Consider reducing spending next month or adjusting your budget.`;
+                        recommendationsList.appendChild(rec);
+                    } else if (percent > 0.8) {
+                        hasRecommendation = true;
+                        const remaining = (budget - spent).toFixed(2);
+                        const rec = document.createElement('div');
+                        rec.className = 'bg-yellow-100 text-yellow-800 px-3 py-2 rounded';
+                        rec.textContent = `You are close to your budget limit in ${cat}. Only $${remaining} left.`;
+                        recommendationsList.appendChild(rec);
+                    }
+                }
+            });
+            if (!hasRecommendation) {
+                recommendationsList.innerHTML = '<p class="text-gray-500 text-sm">No urgent spending recommendations. Keep up the good work!</p>';
+            }
+        }
+
+        window.openNoteModal = (id = null) => {
+            const note = id ? localNotes.find(n => n.id === id) : null;
+            const modal = document.getElementById('note-modal');
+            const title = document.getElementById('note-modal-title');
+            const noteText = document.getElementById('note-text');
+            const noteTags = document.getElementById('note-tags');
+            const noteId = document.getElementById('note-id');
+            noteId.value = note ? note.id : '';
+            noteText.value = note ? note.text : '';
+            noteTags.value = note && note.tags ? note.tags.join(', ') : '';
+            title.textContent = note ? 'Edit Note' : 'Add New Note';
+            // Related Notes logic
+            const relatedSection = document.getElementById('related-notes-section');
+            const relatedList = document.getElementById('related-notes-list');
+            relatedList.innerHTML = '';
+            relatedSection.classList.add('hidden');
+            let tags = note && note.tags ? note.tags : [];
+            if (!tags.length && noteTags.value) {
+                tags = noteTags.value.split(',').map(t => t.trim()).filter(t => t.length > 0);
+            }
+            // Normalize tags for matching
+            const normTags = tags.map(t => t.trim().toLowerCase());
+            if (normTags.length > 0) {
+                const related = localNotes.filter(n => n.id !== (note ? note.id : null) && n.tags && n.tags.some(tag => normTags.includes(tag.trim().toLowerCase())));
+                if (related.length > 0) {
+                    relatedSection.classList.remove('hidden');
+                    related.forEach(rn => {
+                        const tagsHtml = rn.tags && rn.tags.length > 0
+                            ? `<div class='flex flex-wrap gap-1 mt-1'>${rn.tags.map(tag => `<span class='bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full'>${tag}</span>`).join('')}</div>`
+                            : '';
+                        relatedList.innerHTML += `<div class='p-2 bg-gray-100 rounded'><div class='text-xs truncate mb-1'>${rn.text}</div>${tagsHtml}</div>`;
+                    });
+                }
+            }
+            modal.classList.replace('hidden', 'flex');
+        };
+
+        window.saveNote = () => {
+            const id = document.getElementById('note-id').value;
+            const now = Date.now();
+            const tags = document.getElementById('note-tags').value
+                .split(',')
+                .map(t => t.trim())
+                .filter(t => t.length > 0);
+            let noteData;
+            if (id) {
+                // Editing existing note: preserve position, size, color, createdAt, zIndex
+                const oldNote = localNotes.find(n => n.id === id);
+                noteData = {
+                    id,
+                    text: document.getElementById('note-text').value,
+                    tags,
+                    position: oldNote?.position || { x: '50px', y: '50px' },
+                    size: oldNote?.size || { width: '220px', height: '220px' },
+                    color: oldNote?.color || window.selectedColor,
+                    zIndex: oldNote?.zIndex || (localNotes.length + 1),
+                    createdAt: oldNote?.createdAt || now
+                };
+                const index = localNotes.findIndex(n => n.id === id);
+                if (index !== -1) localNotes[index] = noteData;
+            } else {
+                // New note
+                noteData = {
+                    id: now.toString(),
+                    text: document.getElementById('note-text').value,
+                    tags,
+                    position: { x: '50px', y: '50px' },
+                    size: { width: '220px', height: '220px' },
+                    color: window.selectedColor,
+                    zIndex: localNotes.length + 1,
+                    createdAt: now
+                };
+                localNotes.push(noteData);
+            }
+            console.log('Saving note:', noteData); // Debug log
+            localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
+            closeModal('note-modal');
+            renderNotes();
+            showToast('Note saved successfully!', 'success');
+        };
+
+        function renderNotes() {
+            const container = document.getElementById('notes-container');
+            container.innerHTML = '';
+            // Patch notes to ensure all required properties exist
+            localNotes = localNotes.map((note, idx) => ({
+                ...note,
+                position: note.position || { x: '50px', y: '50px' },
+                size: note.size || { width: '220px', height: '220px' },
+                color: note.color || window.selectedColor || '#fef9c3',
+                zIndex: note.zIndex || (idx + 1),
+                createdAt: note.createdAt || Date.now(),
+                tags: note.tags || []
+            }));
+            localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
+            // Group by Tag logic
+            const groupByTag = document.getElementById('group-by-tag-toggle')?.checked;
+            if (groupByTag) {
+                // Build tag groups
+                const tagMap = {};
+                localNotes.forEach(note => {
+                    if (note.tags && note.tags.length > 0) {
+                        note.tags.forEach(tag => {
+                            const normTag = tag.trim().toLowerCase();
+                            if (!tagMap[normTag]) tagMap[normTag] = { tag, notes: [] };
+                            tagMap[normTag].notes.push(note);
+                        });
+                    }
+                });
+                // Render each tag group
+                Object.values(tagMap).forEach(group => {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'mb-6';
+                    groupDiv.innerHTML = `<div class='font-bold text-green-700 mb-2 text-base'>#${group.tag}</div><div class='flex flex-wrap gap-4'></div>`;
+                    const notesRow = groupDiv.querySelector('div.flex');
+                    group.notes.forEach(note => {
+                        const noteEl = document.createElement('div');
+                        renderNoteTo(note, noteEl);
+                        notesRow.appendChild(noteEl);
+                    });
+                    container.appendChild(groupDiv);
+                });
+                // Untagged notes
+                const untagged = localNotes.filter(note => !note.tags || note.tags.length === 0);
+                if (untagged.length > 0) {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'mb-6';
+                    groupDiv.innerHTML = `<div class='font-bold text-gray-500 mb-2 text-base'>Untagged</div><div class='flex flex-wrap gap-4'></div>`;
+                    const notesRow = groupDiv.querySelector('div.flex');
+                    untagged.forEach(note => {
+                        const noteEl = document.createElement('div');
+                        renderNoteTo(note, noteEl);
+                        notesRow.appendChild(noteEl);
+                    });
+                    container.appendChild(groupDiv);
+                }
+            } else {
+                // Classic layout
+                localNotes.forEach(note => renderNote(note));
+            }
+        }
+        // Helper to render a note into a given element
+        function renderNoteTo(note, el) {
+            el.className = 'note p-4 pb-10 rounded-lg shadow-md';
+            el.style.cssText = `width:220px;height:220px;background-color:${note.color};position:relative;resize:both;overflow:hidden;`;
+            const tagsHtml = note.tags && note.tags.length > 0
+                ? `<div style="position:absolute;left:0;bottom:0;width:100%;padding:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem;background:transparent;z-index:2;">${note.tags.map(tag => `<span class='bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full'>${tag}</span>`).join('')}</div>`
+                : '';
+            el.innerHTML = `
+                <div class="note-header"></div>
+                <button class="delete-btn absolute top-2 right-2 bg-black/20 text-white w-5 h-5 rounded-full text-xs"
+                        onclick="deleteNote('${note.id}')">X</button>
+                <button class="absolute top-2 right-8 bg-gray-200 text-gray-700 w-5 h-5 rounded-full text-xs flex items-center justify-center hover:bg-gray-300" title="Edit Note"
+                        onclick="openNoteModal('${note.id}')"><i class="fas fa-pen"></i></button>
+                <textarea style="background:transparent;width:100%;height:calc(100% - 30px);border:none;resize:none;outline:none;">${note.text}</textarea>
+                ${tagsHtml}
+            `;
+        }
+
+        // =============================
+        //         HABIT TRACKER
+        // =============================
+        // --- Storage Keys & Presets ---
+        const HABIT_STORAGE_KEY = 'habitProgress';
+        const HABIT_PRESETS = [
+            {
+                id: 'water',
+                name: 'Drink Water',
+                goal: 8, // 8 glasses (0.5L each for 4L)
+                unit: 'glass',
+                icon: '💧',
+                description: 'Drink 3-4 liters (8 glasses) of water today.'
+            },
+            {
+                id: 'reading',
+                name: 'Read Book',
+                goal: 1,
+                unit: 'session',
+                icon: '📚',
+                description: 'Read for 15 minutes before sleeping.'
+            },
+            {
+                id: 'meditation',
+                name: 'Meditate',
+                goal: 1,
+                unit: 'session',
+                icon: '🧘',
+                description: 'Meditate for 10 minutes in the morning.'
+            }
+        ];
+        // --- Utility: Get today's date key ---
+        function getTodayKey() {
+            // Returns a string key for today (YYYY-M-D)
+            const d = new Date();
+            return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+        }
+        // --- Load and Save Habit Progress ---
+        function loadHabitProgress() {
+            // Loads today's habit progress from localStorage
+            const data = JSON.parse(localStorage.getItem(HABIT_STORAGE_KEY) || '{}');
+            return data[getTodayKey()] || {};
+        }
+        function saveHabitProgress(progress) {
+            // Saves today's habit progress to localStorage
+            const all = JSON.parse(localStorage.getItem(HABIT_STORAGE_KEY) || '{}');
+            all[getTodayKey()] = progress;
+            localStorage.setItem(HABIT_STORAGE_KEY, JSON.stringify(all));
+        }
+        // --- Render the Habit Tracker UI ---
+        function renderHabitTracker() {
+            renderHabitChallenge(); // Render the 30-day challenge tracker
+            const container = document.getElementById('habit-tracker-dashboard');
+            container.innerHTML = '';
+            const progress = loadHabitProgress();
+            HABIT_PRESETS.forEach(habit => {
+                let html = `<div class='mb-4'><div class='flex items-center mb-1'><span class='text-2xl mr-2'>${habit.icon}</span><span class='font-semibold text-gray-700'>${habit.name}</span><span class='ml-2 text-xs text-gray-400'>${habit.description}</span></div>`;
+                // --- Water Habit ---
+                if (habit.id === 'water') {
+                    html += `<div class='flex gap-1 mb-1'>`;
+                    for (let i = 1; i <= habit.goal; i++) {
+                        html += `<button class='w-7 h-7 rounded-full border ${progress.water && progress.water >= i ? 'bg-blue-400' : 'bg-blue-100'}' onclick='markHabitProgress("water", ${i})'></button>`;
+                    }
+                    html += `</div><div class='text-xs text-gray-500'>${progress.water || 0} / ${habit.goal} glasses</div>`;
+                // --- Reading Habit ---
+                } else if (habit.id === 'reading') {
+                    html += `<button class='px-3 py-1 rounded bg-green-100 ${progress.reading ? 'bg-green-400 text-white' : ''}' onclick='markHabitProgress("reading", 1)'>${progress.reading ? 'Done' : 'Mark as Done'}</button>`;
+                // --- Meditation Habit ---
+                } else if (habit.id === 'meditation') {
+                    html += `<div class='flex items-center gap-2'>
+                        <button class='px-3 py-1 rounded bg-purple-100' onclick='startMeditation()'>Start</button>
+                        <span id='meditation-timer' class='text-lg font-mono text-purple-700'></span>
+                        <span id='meditation-clock' class='text-sm text-gray-500'></span>
+                        <button class='px-3 py-1 rounded bg-purple-200' onclick='endMeditation()'>End</button>
+                        <span class='ml-2 text-xs text-gray-500'>${progress.meditation ? 'Done' : 'Not done'}</span>
+                    </div>`;
+                }
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+        }
+        // --- Mark Progress for a Habit ---
+        function markHabitProgress(habit, value) {
+            const progress = loadHabitProgress();
+            if (habit === 'water') {
+                progress.water = value;
+            } else {
+                progress[habit] = value;
+            }
+            saveHabitProgress(progress);
+            renderHabitTracker();
+        }
+        // --- Meditation Timer Logic ---
+        let meditationInterval = null;
+        let meditationStartTime = null;
+        // Updates the real-time clock next to the meditation timer
+        function updateMeditationClock() {
+            const clockEl = document.getElementById('meditation-clock');
+            if (!clockEl) return;
+            const now = new Date();
+            const h = now.getHours().toString().padStart(2, '0');
+            const m = now.getMinutes().toString().padStart(2, '0');
+            const s = now.getSeconds().toString().padStart(2, '0');
+            clockEl.textContent = `🕒 ${h}:${m}:${s}`;
+        }
+        // Starts the meditation timer (10 minutes)
+        function startMeditation() {
+            const timerEl = document.getElementById('meditation-timer');
+            const clockEl = document.getElementById('meditation-clock');
+            let seconds = 600; // 10 minutes
+            timerEl.textContent = '10:00';
+            meditationStartTime = Date.now();
+            if (meditationInterval) clearInterval(meditationInterval);
+            meditationInterval = setInterval(() => {
+                seconds--;
+                const min = Math.floor(seconds / 60);
+                const sec = seconds % 60;
+                timerEl.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+                updateMeditationClock();
+                if (seconds <= 0) {
+                    clearInterval(meditationInterval);
+                    timerEl.textContent = 'Done!';
+                    markHabitProgress('meditation', 1);
+                    showToast('Meditation complete!');
+                }
+            }, 1000);
+            updateMeditationClock();
+        }
+        // Ends the meditation timer and marks as done
+        function endMeditation() {
+            if (meditationInterval) {
+                clearInterval(meditationInterval);
+                document.getElementById('meditation-timer').textContent = '';
+                document.getElementById('meditation-clock').textContent = '';
+                markHabitProgress('meditation', 1);
+                showToast('Meditation marked as done!');
+            }
+        }
+        // --- 30-Day Challenge & Achievement Badge ---
+        function getAllHabitProgress() {
+            // Returns all habit progress from localStorage
+            return JSON.parse(localStorage.getItem(HABIT_STORAGE_KEY) || '{}');
+        }
+        function getStreakAndChallenge() {
+            // Calculates current streak and challenge progress for the last 30 days
+            const all = getAllHabitProgress();
+            const today = new Date();
+            let streak = 0;
+            let challenge = 0;
+            // Check last 30 days
+            for (let i = 0; i < 30; i++) {
+                const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+                const key = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+                const day = all[key];
+                if (day && day.water >= 8 && day.reading && day.meditation) {
+                    challenge++;
+                    // For streak, must be consecutive
+                    if (i === streak) streak++;
+                } else {
+                    if (i === streak) break;
+                }
+            }
+            return { streak, challenge };
+        }
+        // Renders the 30-day challenge tracker and achievement badge
+        function renderHabitChallenge() {
+            const { streak, challenge } = getStreakAndChallenge();
+            const container = document.getElementById('habit-challenge-tracker');
+            let achieved = challenge >= 30;
+            let html = `<div class='mb-2 flex items-center gap-2'><span class='font-semibold text-blue-700'>30-Day Challenge</span>`;
+            // Achievement badge (greyed out until achieved)
+            html += `<span class='ml-2 ${achieved ? 'animate-bounce' : ''}'>
+                <span class='inline-block align-middle ${achieved ? '' : 'opacity-40 grayscale'}' title='30-Day Habit Master'>
+                    🏅
+                </span>
+            </span>`;
+            if (achieved) {
+                html += `<span class='ml-2 px-2 py-1 rounded bg-yellow-300 text-yellow-900 font-bold animate-bounce'>🏆 Challenge Complete!</span>`;
+            } else {
+                html += `<span class='ml-2 text-xs text-gray-500'>${challenge}/30 days completed</span>`;
+            }
+            html += `</div>`;
+            html += `<div class='w-full bg-gray-200 rounded-full h-3 mb-2'><div class='bg-blue-400 h-3 rounded-full' style='width:${Math.min(challenge/30*100,100)}%'></div></div>`;
+            html += `<div class='text-xs text-green-700'>Current streak: <span class='font-bold'>${streak}</span> day(s)</div>`;
+            container.innerHTML = html;
+        }
+        // --- Expose functions for inline onclick ---
+        window.markHabitProgress = markHabitProgress;
+        window.startMeditation = startMeditation;
+        window.endMeditation = endMeditation;
+        // --- Render on load and update clock every second ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHabitTracker();
+            setInterval(updateMeditationClock, 1000);
+        });
+
+        // --- Tutorial Modal Logic ---
+        function openTutorial() {
+          document.getElementById('tutorial-modal').classList.remove('hidden');
+        }
+        function closeTutorial() {
+          document.getElementById('tutorial-modal').classList.add('hidden');
+        }
+        window.openTutorial = openTutorial;
+        window.closeTutorial = closeTutorial;
+
+        // --- Update header greeting with username if available ---
+        function updateHeaderGreeting() {
+          // Replace with your actual username retrieval logic
+          const username = localStorage.getItem('username') || 'Champ';
+          document.getElementById('header-greeting').innerHTML = `🏆 Welcome back, <span class='text-green-900'>${username}</span>!!`;
+        }
+        document.addEventListener('DOMContentLoaded', updateHeaderGreeting);
     </script>
+
+    <!-- Add Help button to header (example, place in your header/navbar) -->
+    <button onclick="openTutorial()" class="fixed bottom-28 left-6 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-600 z-40">Help</button>
 </body>
 </html>
