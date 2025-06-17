@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Assistant Pro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .nav-btn.active { background-color: #4338ca; color: white; }
+        .note { transition: box-shadow 0.2s, background-color 0.2s; }
+        .note:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .note-header { cursor: move; height: 25px; width: 100%; position: absolute; top: 0; left: 0; }
+        .note textarea { width: 100%; height: calc(100% - 30px); border: none; background: transparent; font-size: 14px; outline: none; resize: none; margin-top: 20px; }
+        .note .delete-btn { opacity: 0; transition: opacity 0.2s; }
+        .note:hover .delete-btn { opacity: 1; }
+        .tab-link.active { border-color: #4338ca; color: #4338ca; background-color: white; border-bottom-color: transparent; }
+        .tab-link:not(.active) { border-color: transparent; }
+    </style>
+</head>
+<body class="text-gray-800">
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 bg-gray-100 z-50 flex items-center justify-center">
+        <div class="w-full max-w-sm p-8 bg-white rounded-xl shadow-lg">
+            <div class="text-center mb-6">
+                 <i class="fas fa-user-shield text-5xl text-indigo-600"></i>
+                 <h1 class="text-2xl font-bold text-gray-800 mt-4">Assistant Login</h1>
+            </div>
+            <div id="login-error" class="hidden text-red-500 text-sm text-center mb-4"></div>
+            <input id="username-input" type="text" placeholder="Username" class="w-full border-gray-300 p-3 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="admin">
+            <input id="password-input" type="password" placeholder="Password" class="w-full border-gray-300 p-3 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="admin">
+            <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition">Login</button>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="app-container" class="min-h-screen hidden">
+        <header class="bg-white shadow-sm sticky top-0 z-40">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-user-shield text-2xl text-indigo-600"></i>
+                        <h1 class="ml-3 text-xl font-bold text-gray-700">Personal Assistant Pro</h1>
+                    </div>
+                    <div class="flex items-center">
+                        <span id="welcome-message" class="text-gray-600 font-medium hidden md:block"></span>
+                        <div class="hidden md:flex items-baseline space-x-4 ml-6">
+                            <button onclick="showSection('tasks')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-200 active">Tasks</button>
+                            <button onclick="showSection('budget')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-200">Budget</button>
+                            <button onclick="showSection('notes')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-200">Notes</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+            <div id="daily-recommendation" class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-md mb-6 flex items-center">
+                <i class="fas fa-lightbulb mr-3 animate-pulse"></i>
+                <p id="recommendation-text">Generating a helpful tip for you...</p>
+                <button onclick="getAIRecommendation()" class="ml-auto text-indigo-500 hover:text-indigo-700"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            
+            <!-- Sections -->
+            <section id="tasks" class="app-section">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-700">Task Manager</h2>
+                    <button onclick="openTaskModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition"><i class="fas fa-plus mr-2"></i>Add Task</button>
+                </div>
+                <div id="task-list" class="space-y-4"></div>
+            </section>
+
+            <section id="budget" class="app-section hidden">
+                <ul class="flex border-b -mb-px">
+                    <li><a class="tab-link active inline-block border-l border-t border-r rounded-t py-2 px-4 font-semibold" href="#" onclick="showBudgetTab(event, 'tracker')">Tracker & Charts</a></li>
+                    <li><a class="tab-link inline-block py-2 px-4 text-gray-500 hover:text-indigo-700 font-semibold" href="#" onclick="showBudgetTab(event, 'allocation')">Allocation</a></li>
+                </ul>
+                <div class="bg-white p-4 rounded-b-lg rounded-r-lg border border-t-0">
+                    <div id="budget-tracker-tab">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-700">Budget Tracker</h2>
+                            <button onclick="openTransactionModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition"><i class="fas fa-plus mr-2"></i>Add Transaction</button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-white">
+                            <div class="bg-green-500 p-4 rounded-lg shadow"><h3 class="font-bold">Total Income</h3><p id="total-income">$0.00</p></div>
+                            <div class="bg-red-500 p-4 rounded-lg shadow"><h3 class="font-bold">Total Expenses</h3><p id="total-expenses">$0.00</p></div>
+                            <div class="bg-blue-500 p-4 rounded-lg shadow"><h3 class="font-bold">Balance</h3><p id="balance">$0.00</p></div>
+                        </div>
+                        <!-- Charts -->
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                            <div class="lg:col-span-2 bg-gray-50 p-4 rounded-lg"><canvas id="incomeExpenseChart"></canvas></div>
+                            <div class="lg:col-span-3 bg-gray-50 p-4 rounded-lg"><canvas id="categoryExpenseChart"></canvas></div>
+                        </div>
+                        <div id="transaction-list" class="bg-white p-4 rounded-lg shadow-inner"></div>
+                    </div>
+                    <div id="budget-allocation-tab" class="hidden">
+                         <h2 class="text-2xl font-bold text-gray-700 mb-4">Budget Allocation</h2>
+                         <div id="allocation-list" class="space-y-3 p-4 rounded-lg"></div>
+                         <button onclick="saveBudgets()" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition">Save Budgets</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="notes" class="app-section hidden h-[70vh] relative">
+                 <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-700">Sticky Notes</h2>
+                    <div class="flex items-center space-x-2">
+                        <div id="color-palette" class="flex space-x-1"></div>
+                        <button onclick="createNote()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-2"></i>Add Note</button>
+                    </div>
+                </div>
+                <div id="notes-container" class="w-full h-full rounded-lg bg-gray-200/50 border-2 border-dashed border-gray-400 relative overflow-auto"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="task-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg">
+            <h3 id="task-modal-title" class="text-xl font-bold mb-4">Add New Task</h3>
+            <input id="task-id" type="hidden">
+            <input id="task-input" type="text" placeholder="Task description..." class="w-full border p-2 rounded mb-2">
+            <div class="grid grid-cols-2 gap-4 mb-2">
+                <div><label class="font-semibold text-sm">Start Date</label><input id="task-start-date" type="date" class="w-full border p-2 rounded"></div>
+                <div><label class="font-semibold text-sm">Due Date</label><input id="task-due-date" type="date" class="w-full border p-2 rounded"></div>
+            </div>
+            <select id="task-priority" class="w-full border p-2 rounded mb-4">
+                <option value="low">Low Priority</option><option value="medium" selected>Medium Priority</option><option value="high">High Priority</option>
+            </select>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeModal('task-modal')" class="bg-gray-300 px-4 py-2 rounded-lg">Cancel</button>
+                <button onclick="saveTask()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Save Task</button>
+            </div>
+        </div>
+    </div>
+    <div id="transaction-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">Add New Transaction</h3>
+            <select id="trans-type" class="w-full border p-2 rounded mb-4" onchange="updateTransactionCategories()"><option value="expense">Expense</option><option value="income">Income</option></select>
+            <input id="trans-desc" type="text" placeholder="Description..." class="w-full border p-2 rounded mb-2">
+            <input id="trans-amount" type="number" placeholder="Amount..." class="w-full border p-2 rounded mb-2">
+            <select id="trans-category" class="w-full border p-2 rounded mb-2"></select>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeModal('transaction-modal')" class="bg-gray-300 px-4 py-2 rounded-lg">Cancel</button>
+                <button onclick="addTransaction()" class="bg-green-600 text-white px-4 py-2 rounded-lg">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Local Storage Keys
+        const STORAGE_KEYS = {
+            TASKS: 'personal_assistant_tasks',
+            TRANSACTIONS: 'personal_assistant_transactions',
+            BUDGETS: 'personal_assistant_budgets',
+            NOTES: 'personal_assistant_notes'
+        };
+
+        // Initialize data
+        let localTasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
+        let localTransactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS) || '[]');
+        let localBudgets = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUDGETS) || '{}');
+        let localNotes = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTES) || '[]');
+        let incomeExpenseChart, categoryExpenseChart;
+
+        // Navigation
+        window.showSection = (id) => {
+            document.querySelectorAll('.app-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.nav-btn[onclick="showSection('${id}')"]`).classList.add('active');
+        };
+
+        // Modal handling
+        window.openTaskModal = (taskId = null) => {
+            const task = taskId ? localTasks.find(t => t.id === taskId) : null;
+            const modal = document.getElementById('task-modal');
+            const title = document.getElementById('task-modal-title');
+            
+            document.getElementById('task-id').value = task ? task.id : '';
+            document.getElementById('task-input').value = task ? task.text : '';
+            document.getElementById('task-start-date').value = task ? task.startDate : '';
+            document.getElementById('task-due-date').value = task ? task.dueDate : '';
+            document.getElementById('task-priority').value = task ? task.priority : 'medium';
+            
+            title.textContent = task ? 'Edit Task' : 'Add New Task';
+            modal.classList.replace('hidden', 'flex');
+        };
+
+        window.openTransactionModal = () => {
+            updateTransactionCategories();
+            document.getElementById('transaction-modal').classList.replace('hidden', 'flex');
+        };
+
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.replace('flex', 'hidden');
+        };
+
+        // Task Management
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            if (localTasks.length === 0) {
+                list.innerHTML = `<div class="text-center p-8 bg-white rounded-lg shadow-sm">
+                    <p class="text-gray-500">No tasks yet. Add one to get started!</p>
+                </div>`;
+                return;
+            }
+
+            const taskPriorities = {
+                high: { color: 'red', icon: 'fa-angles-up' },
+                medium: { color: 'yellow', icon: 'fa-equals' },
+                low: { color: 'green', icon: 'fa-angles-down' }
+            };
+
+            const taskStatuses = {
+                'Not Started': 'bg-gray-200 text-gray-800',
+                'In Progress': 'bg-blue-200 text-blue-800',
+                'Completed': 'bg-green-200 text-green-800'
+            };
+
+            localTasks.sort((a,b) => 
+                (a.status === 'Completed' ? 1 : -1) - (b.status === 'Completed' ? 1 : -1) ||
+                (new Date(a.dueDate) - new Date(b.dueDate))
+            );
+
+            list.innerHTML = localTasks.map(task => {
+                const priority = taskPriorities[task.priority] || taskPriorities.medium;
+                const isOverdue = !task.dueDate ? false : 
+                    (new Date(task.dueDate) < new Date() && task.status !== 'Completed');
+
+                return `
+                    <div class="bg-white p-4 rounded-lg shadow-sm ${task.status === 'Completed' ? 'opacity-50' : ''}">
+                        <div class="flex items-start justify-between">
+                            <p class="font-semibold text-gray-800">${task.text}</p>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="openTaskModal('${task.id}')" class="text-gray-400 hover:text-indigo-600">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteTask('${task.id}')" class="text-gray-400 hover:text-red-500">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-3 text-sm">
+                            <div class="flex items-center space-x-4">
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold ${taskStatuses[task.status]}">
+                                    ${task.status}
+                                </span>
+                                <span class="text-${priority.color}-500 font-semibold">
+                                    <i class="fas ${priority.icon} mr-1"></i> ${task.priority}
+                                </span>
+                            </div>
+                            <div class="flex items-center space-x-1 text-gray-500 ${isOverdue ? 'text-red-500 font-bold' : ''}">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}</span>
+                            </div>
+                        </div>
+                        <select onchange="updateTaskStatus('${task.id}', this.value)" 
+                                class="mt-2 w-full border-gray-200 rounded-md text-sm p-1">
+                            ${Object.keys(taskStatuses).map(s => 
+                                `<option value="${s}" ${task.status === s ? 'selected' : ''}>${s}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Budget Management
+        const expenseCategories = ['Groceries', 'Transport', 'Bills', 'Entertainment', 'Shopping', 'Health', 'Other'];
+        const incomeCategories = ['Salary', 'Investment', 'Part-time', 'Gift', 'Other'];
+
+        window.updateTransactionCategories = () => {
+            const type = document.getElementById('trans-type').value;
+            const categorySelect = document.getElementById('trans-category');
+            const categories = type === 'income' ? incomeCategories : expenseCategories;
+            categorySelect.innerHTML = categories.map(c => 
+                `<option value="${c}">${c}</option>`
+            ).join('');
+        };
+
+        function renderBudget() {
+            const income = localTransactions.filter(t => t.type === 'income')
+                .reduce((s,t) => s + t.amount, 0);
+            const expenses = localTransactions.filter(t => t.type === 'expense')
+                .reduce((s,t) => s + t.amount, 0);
+
+            document.getElementById('total-income').textContent = `$${income.toFixed(2)}`;
+            document.getElementById('total-expenses').textContent = `$${expenses.toFixed(2)}`;
+            document.getElementById('balance').textContent = `$${(income - expenses).toFixed(2)}`;
+
+            renderTransactionList();
+            renderCharts(income, expenses);
+        }
+
+        function renderTransactionList() {
+            const list = document.getElementById('transaction-list');
+            if (localTransactions.length === 0) {
+                list.innerHTML = `<p class="text-center text-gray-500 py-4">No transactions recorded.</p>`;
+                return;
+            }
+
+            localTransactions.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+            list.innerHTML = `
+                <div class="grid grid-cols-4 font-bold border-b pb-2 mb-2 text-sm text-gray-600">
+                    <span>Description</span>
+                    <span>Category</span>
+                    <span class="text-right">Amount</span>
+                    <span class="text-right">Actions</span>
+                </div>
+                ${localTransactions.map(t => `
+                    <div class="grid grid-cols-4 items-center py-2 border-b last:border-0">
+                        <span>${t.description}</span>
+                        <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full w-fit">
+                            ${t.category || 'N/A'}
+                        </span>
+                        <span class="text-right font-medium ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                            ${t.type === 'income' ? '+' : '-'} $${t.amount.toFixed(2)}
+                        </span>
+                        <button onclick="deleteTransaction('${t.id}')" 
+                                class="text-gray-400 hover:text-red-500 justify-self-end">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function renderCharts(income, expenses) {
+            if (incomeExpenseChart) incomeExpenseChart.destroy();
+            if (categoryExpenseChart) categoryExpenseChart.destroy();
+
+            // Pie Chart: Income vs Expense
+            const pieCtx = document.getElementById('incomeExpenseChart').getContext('2d');
+            incomeExpenseChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Income', 'Expenses'],
+                    datasets: [{
+                        data: [income, expenses],
+                        backgroundColor: ['#10B981', '#EF4444'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: 'Income vs. Expenses' }
+                    }
+                }
+            });
+
+            // Bar Chart: Expenses by Category
+            const categoryTotals = {};
+            expenseCategories.forEach(cat => categoryTotals[cat] = 0);
+            localTransactions
+                .filter(t => t.type === 'expense')
+                .forEach(t => {
+                    if(categoryTotals[t.category] !== undefined) {
+                        categoryTotals[t.category] += t.amount;
+                    }
+                });
+
+            const barCtx = document.getElementById('categoryExpenseChart').getContext('2d');
+            categoryExpenseChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(categoryTotals),
+                    datasets: [{
+                        label: 'Amount Spent',
+                        data: Object.values(categoryTotals),
+                        backgroundColor: '#6366F1',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'Spending by Category' }
+                    },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        window.deleteTransaction = (id) => {
+            localTransactions = localTransactions.filter(t => t.id !== id);
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(localTransactions));
+            renderBudget();
+        };
+
+        window.showBudgetTab = (event, tabName) => {
+            event.preventDefault();
+            document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tabName === 'tracker') {
+                document.getElementById('budget-tracker-tab').classList.remove('hidden');
+                document.getElementById('budget-allocation-tab').classList.add('hidden');
+            } else {
+                document.getElementById('budget-tracker-tab').classList.add('hidden');
+                document.getElementById('budget-allocation-tab').classList.remove('hidden');
+            }
+        };
+
+        // Notes Management
+        const noteColors = ['#fffa8b', '#dbeafe', '#d1fae5', '#fee2e2', '#f3e8ff'];
+        window.selectedColor = noteColors[0];
+        let zIndexCounter = 1;
+
+        function renderNote(note) {
+            const container = document.getElementById('notes-container');
+            const el = document.createElement('div');
+            el.className = 'note absolute p-4 rounded-lg shadow-md';
+            el.id = note.id;
+            el.style.cssText = `
+                left:${note.position.x};
+                top:${note.position.y};
+                width:${note.size.width};
+                height:${note.size.height};
+                z-index:${note.zIndex};
+                background-color:${note.color};
+                resize:both;
+                overflow:hidden;
+            `;
+            el.innerHTML = `
+                <div class="note-header"></div>
+                <button class="delete-btn absolute top-2 right-2 bg-black/20 text-white w-5 h-5 rounded-full text-xs"
+                        onclick="deleteNote('${note.id}')">X</button>
+                <textarea>${note.text}</textarea>
+            `;
+            container.appendChild(el);
+            enableDragAndResize(el, note.id);
+        }
+
+        function enableDragAndResize(el, id) {
+            const header = el.querySelector('.note-header');
+            const textarea = el.querySelector('textarea');
+
+            header.onmousedown = e => {
+                e.preventDefault();
+                let isDragging = true;
+                el.style.zIndex = zIndexCounter++;
+                let ox = e.clientX - el.offsetLeft,
+                    oy = e.clientY - el.offsetTop;
+
+                document.onmousemove = e => {
+                    if(!isDragging) return;
+                    el.style.left = e.clientX - ox + 'px';
+                    el.style.top = e.clientY - oy + 'px';
+                };
+
+                document.onmouseup = () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        document.onmousemove = document.onmouseup = null;
+                        const note = localNotes.find(n => n.id === id);
+                        if (note) {
+                            note.position = { x: el.style.left, y: el.style.top };
+                            note.zIndex = parseInt(el.style.zIndex);
+                            localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
+                        }
+                    }
+                };
+            };
+
+            let debounceTimer;
+            textarea.oninput = () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const note = localNotes.find(n => n.id === id);
+                    if (note) {
+                        note.text = textarea.value;
+                        localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
+                    }
+                }, 500);
+            };
+
+            new ResizeObserver(() => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const note = localNotes.find(n => n.id === id);
+                    if (note) {
+                        note.size = { width: el.style.width, height: el.style.height };
+                        localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
+                    }
+                }, 500);
+            }).observe(el);
+        }
+
+        function loadNotes() {
+            const container = document.getElementById('notes-container');
+            container.innerHTML = '';
+            localNotes.forEach(note => renderNote(note));
+        }
+
+        // Login handling
+        window.handleLogin = () => {
+            const user = document.getElementById('username-input').value;
+            const pass = document.getElementById('password-input').value;
+            
+            if (user === 'admin' && pass === 'admin') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('welcome-message').textContent = 'Welcome Admin...';
+                loadAllData();
+            } else {
+                const errorEl = document.getElementById('login-error');
+                errorEl.textContent = 'Invalid credentials. Please try again.';
+                errorEl.classList.remove('hidden');
+            }
+        };
+
+        // Load all data
+        function loadAllData() {
+            loadTasks();
+            loadBudgets();
+            loadTransactions();
+            loadNotes();
+            getAIRecommendation();
+        }
+
+        // Task Management
+        window.saveTask = () => {
+            const id = document.getElementById('task-id').value;
+            const taskData = {
+                id: id || Date.now().toString(),
+                text: document.getElementById('task-input').value,
+                priority: document.getElementById('task-priority').value,
+                startDate: document.getElementById('task-start-date').value,
+                dueDate: document.getElementById('task-due-date').value,
+                status: id ? localTasks.find(t => t.id === id)?.status || 'Not Started' : 'Not Started',
+                createdAt: id ? localTasks.find(t => t.id === id)?.createdAt : Date.now()
+            };
+
+            if (!taskData.text.trim()) return;
+
+            if (id) {
+                const index = localTasks.findIndex(t => t.id === id);
+                if (index !== -1) localTasks[index] = taskData;
+            } else {
+                localTasks.push(taskData);
+            }
+
+            localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(localTasks));
+            closeModal('task-modal');
+            renderTasks();
+        };
+
+        window.updateTaskStatus = (id, status) => {
+            const task = localTasks.find(t => t.id === id);
+            if (task) {
+                task.status = status;
+                localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(localTasks));
+                renderTasks();
+            }
+        };
+
+        window.deleteTask = (id) => {
+            localTasks = localTasks.filter(t => t.id !== id);
+            localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(localTasks));
+            renderTasks();
+        };
+
+        function loadTasks() {
+            renderTasks();
+        }
+
+        // Budget Management
+        window.addTransaction = () => {
+            const transaction = {
+                id: Date.now().toString(),
+                type: document.getElementById('trans-type').value,
+                description: document.getElementById('trans-desc').value,
+                amount: parseFloat(document.getElementById('trans-amount').value),
+                category: document.getElementById('trans-category').value,
+                createdAt: Date.now()
+            };
+
+            if (!transaction.description.trim() || isNaN(transaction.amount) || transaction.amount <= 0) return;
+
+            localTransactions.push(transaction);
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(localTransactions));
+            
+            document.getElementById('trans-desc').value = '';
+            document.getElementById('trans-amount').value = '';
+            closeModal('transaction-modal');
+            renderBudget();
+        };
+
+        window.saveBudgets = () => {
+            const newBudgets = {};
+            document.querySelectorAll('#allocation-list input').forEach(input => {
+                const category = input.dataset.category;
+                const amount = parseFloat(input.value);
+                if(category && !isNaN(amount) && amount >= 0) {
+                    newBudgets[category] = amount;
+                }
+            });
+            
+            localBudgets = newBudgets;
+            localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(localBudgets));
+            renderBudgetAllocation();
+        };
+
+        // Notes Management
+        window.createNote = () => {
+            const note = {
+                id: Date.now().toString(),
+                text: '',
+                position: { x: '50px', y: '50px' },
+                size: { width: '220px', height: '220px' },
+                zIndex: localNotes.length + 1,
+                color: window.selectedColor,
+                createdAt: Date.now()
+            };
+
+            localNotes.push(note);
+            localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
+            renderNote(note);
+        };
+
+        window.deleteNote = (id) => {
+            localNotes = localNotes.filter(n => n.id !== id);
+            localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
+            document.getElementById(id)?.remove();
+        };
+
+        // AI Recommendation (simplified for GitHub Pages)
+        window.getAIRecommendation = () => {
+            const tips = [
+                "Remember to review your tasks for today!",
+                "Check your budget allocation to stay on track.",
+                "Don't forget to save your important notes!",
+                "Take a moment to organize your tasks by priority.",
+                "Review your spending patterns to optimize your budget."
+            ];
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            document.getElementById('recommendation-text').textContent = randomTip;
+        };
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate note color palette
+            const palette = document.getElementById('color-palette');
+            palette.innerHTML = noteColors.map(c => 
+                `<button class="w-6 h-6 rounded-full border-2 border-white focus:ring-2 focus:ring-indigo-500" 
+                style="background-color:${c};" onclick="window.selectedColor='${c}';"></button>`
+            ).join('');
+        });
+    </script>
+</body>
+</html>
