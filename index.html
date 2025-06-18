@@ -263,6 +263,66 @@
             padding: 0.5rem 0 !important;
           }
         }
+        @media (max-width: 700px) {
+          .header-main {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+          }
+          .logo-title {
+            flex: 1 1 auto;
+            justify-content: flex-start;
+          }
+          .navbar {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100vw;
+            background: #fff;
+            flex-direction: column;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 100;
+            padding: 1rem 0;
+          }
+          .navbar.active {
+            display: flex;
+          }
+          .hamburger {
+            display: block;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            margin-left: 1rem;
+          }
+        }
+        @media (min-width: 701px) {
+          .header-main {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 2rem;
+          }
+          .logo-title {
+            flex: 1 1 auto;
+            justify-content: flex-start;
+          }
+          .navbar {
+            display: flex !important;
+            flex-direction: row;
+            gap: 2rem;
+            position: static;
+            background: none;
+            box-shadow: none;
+            padding: 0;
+          }
+          .hamburger {
+            display: none;
+          }
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -294,20 +354,21 @@
     <!-- Main Application Container -->
     <div id="app-container" class="min-h-screen hidden">
         <!-- Header -->
-        <div class="w-full bg-white shadow-sm px-2 py-3">
-          <div class="flex flex-col items-start sm:items-center w-full">
-            <div class="flex items-center gap-2 mb-2 text-left sm:text-center">
+        <header class="w-full bg-white shadow-sm sticky top-0 z-40">
+          <div class="header-main flex items-center justify-between relative">
+            <div class="logo-title flex items-center gap-2">
               <span class="text-3xl text-indigo-600"><i class="fas fa-user-shield"></i></span>
               <span class="text-2xl font-bold text-gray-800">Personal Assistant Pro</span>
             </div>
-            <nav class="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full">
+            <nav class="navbar flex gap-4">
               <button id="nav-dashboard" onclick="showSection('dashboard')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Dashboard</button>
               <button id="nav-tasks" onclick="showSection('tasks')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Tasks</button>
               <button id="nav-budget" onclick="showSection('budget')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Budget</button>
               <button id="nav-notes" onclick="showSection('notes')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Notes</button>
             </nav>
+            <button class="hamburger" id="hamburger" aria-label="Open navigation">&#9776;</button>
           </div>
-        </div>
+        </header>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
             <div id="daily-recommendation" class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-md mb-6 flex items-center">
@@ -570,18 +631,41 @@
     </div>
 
     <!-- Help & FAQ Section -->
-    <section id="help" class="bg-white rounded-lg shadow p-4 mt-8 max-w-2xl mx-auto">
-      <h2 class="text-lg font-bold mb-2">Help & FAQ</h2>
-      <ul class="list-disc pl-6 space-y-2">
-        <li><b>How do I add a task?</b> Click the "Add Task" button and fill in the details.</li>
-        <li><b>How do I track my habits?</b> Use the Habit Tracker section to mark your daily progress.</li>
-        <li><b>How do I switch themes?</b> Use the theme switcher in the top-right corner.</li>
-        <li><b>Is my data safe?</b> All your data is stored locally in your browser and never leaves your device.</li>
-        <li><b>Can I export or import my data?</b> Yes! Use the Export/Import buttons in the settings menu.</li>
-        <li><b>How do I use the meditation timer?</b> In the Habit Tracker, click "Start" under Meditate to begin a 10-minute session.</li>
-        <li><b>How do I earn achievement badges?</b> Complete the 30-day habit challenge to unlock the badge!</li>
-      </ul>
-    </section>
+    <div class="flex flex-col items-center text-center">
+      <section id="help" class="bg-white rounded-lg shadow p-4 mt-8 max-w-2xl w-full">
+        <h2 class="text-lg font-bold mb-6">Help & FAQ</h2>
+        <div class="flex flex-col items-center w-full">
+          <div class="faq-item w-full max-w-xl mx-auto mb-2">
+            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I add a task?</button>
+            <div class="faq-answer hidden text-base py-2">Click the "Add Task" button and fill in the details.</div>
+          </div>
+          <div class="faq-item w-full max-w-xl mx-auto mb-2">
+            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I track my habits?</button>
+            <div class="faq-answer hidden text-base py-2">Use the Habit Tracker section to mark your daily progress.</div>
+          </div>
+          <div class="faq-item w-full max-w-xl mx-auto mb-2">
+            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I switch themes?</button>
+            <div class="faq-answer hidden text-base py-2">Use the theme switcher in the top-right corner.</div>
+          </div>
+          <div class="faq-item w-full max-w-xl mx-auto mb-2">
+            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">Is my data safe?</button>
+            <div class="faq-answer hidden text-base py-2">All your data is stored locally in your browser and never leaves your device.</div>
+          </div>
+          <div class="faq-item w-full max-w-xl mx-auto mb-2">
+            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">Can I export or import my data?</button>
+            <div class="faq-answer hidden text-base py-2">Yes! Use the Export/Import buttons in the settings menu.</div>
+          </div>
+          <div class="faq-item w-full max-w-xl mx-auto mb-2">
+            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I use the meditation timer?</button>
+            <div class="faq-answer hidden text-base py-2">In the Habit Tracker, click "Start" under Meditate to begin a 10-minute session.</div>
+          </div>
+          <div class="faq-item w-full max-w-xl mx-auto mb-2">
+            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I earn achievement badges?</button>
+            <div class="faq-answer hidden text-base py-2">Complete the 30-day habit challenge to unlock the badge!</div>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <!-- Tutorial Modal -->
     <div id="tutorial-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
@@ -2296,6 +2380,9 @@
         document.addEventListener('DOMContentLoaded', setupShowAllNotesToggle);
         window.exportNotes = exportNotes;
         window.importNotes = importNotes;
+        document.getElementById('hamburger').onclick = function() {
+          document.querySelector('.navbar').classList.toggle('active');
+        };
     </script>
 
     <!-- Add Help button to header (example, place in your header/navbar) -->
