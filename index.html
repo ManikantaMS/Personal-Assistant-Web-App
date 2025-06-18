@@ -46,6 +46,7 @@
             font-family: 'Inter', sans-serif; 
             background-color: var(--bg-primary);
             color: var(--text-primary);
+            overflow-x: hidden;
         }
 
         .nav-btn.active { 
@@ -217,6 +218,51 @@
         .toast.info {
             background-color: #007bff !important;
         }
+
+        /* Responsive containers and cards */
+        .app-section, .bg-white.rounded-lg.shadow, .note {
+          box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04), 0 1.5px 4px 0 rgba(0,0,0,0.03);
+          border-radius: 1rem;
+          width: 100%;
+          max-width: 100%;
+        }
+        .notes-controls {
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          width: 100%;
+        }
+        @media (max-width: 600px) {
+          .notes-controls {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+          }
+          .app-section, .bg-white.rounded-lg.shadow, .note {
+            padding: 1rem 0.5rem;
+            font-size: 1rem;
+          }
+          h2, h1, .text-2xl, .text-xl {
+            font-size: 1.2rem !important;
+          }
+          button, .nav-btn {
+            font-size: 1rem !important;
+            padding: 0.5rem 1rem !important;
+          }
+        }
+        @media (max-width: 600px) {
+          nav {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            width: 100% !important;
+            gap: 0.5rem !important;
+          }
+          .nav-btn, button {
+            width: 100% !important;
+            min-width: 0 !important;
+            font-size: 1rem !important;
+            padding: 0.5rem 0 !important;
+          }
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -248,21 +294,17 @@
     <!-- Main Application Container -->
     <div id="app-container" class="min-h-screen hidden">
         <!-- Header -->
-        <div class="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
-          <div class="flex items-center gap-2">
-            <span class="text-3xl text-indigo-600"><i class="fas fa-user-shield"></i></span>
-            <span class="text-2xl font-bold text-gray-800">Personal Assistant Pro</span>
-          </div>
-          <div class="flex items-center gap-4">
-            <span id="header-greeting" class="text-xl font-semibold text-green-700 bg-green-50 px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
-              🏆 Welcome back, Champ!!
-            </span>
-            <!-- Navigation -->
-            <nav class="ml-6 flex gap-4">
-              <button onclick="showSection('dashboard')" class="px-4 py-2 rounded-lg font-semibold bg-green-600 text-white">Dashboard</button>
-              <button onclick="showSection('tasks')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Tasks</button>
-              <button onclick="showSection('budget')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Budget</button>
-              <button onclick="showSection('notes')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Notes</button>
+        <div class="w-full bg-white shadow-sm px-2 py-3">
+          <div class="flex flex-col items-start sm:items-center w-full">
+            <div class="flex items-center gap-2 mb-2 text-left sm:text-center">
+              <span class="text-3xl text-indigo-600"><i class="fas fa-user-shield"></i></span>
+              <span class="text-2xl font-bold text-gray-800">Personal Assistant Pro</span>
+            </div>
+            <nav class="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full">
+              <button id="nav-dashboard" onclick="showSection('dashboard')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Dashboard</button>
+              <button id="nav-tasks" onclick="showSection('tasks')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Tasks</button>
+              <button id="nav-budget" onclick="showSection('budget')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Budget</button>
+              <button id="nav-notes" onclick="showSection('notes')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Notes</button>
             </nav>
           </div>
         </div>
@@ -441,17 +483,23 @@
             </section>
 
             <section id="notes" class="app-section hidden">
-                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-700">Sticky Notes</h2>
-                    <div class="flex items-center space-x-2">
-                        <div id="color-palette" class="flex space-x-1"></div>
-                        <!-- Group by Tag Toggle -->
-                        <label class="flex items-center cursor-pointer text-sm font-medium">
-                            <input type="checkbox" id="group-by-tag-toggle" class="mr-2">
-                            Group by Tag
-                        </label>
-                        <button onclick="openNoteModal()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-2"></i>Add Note</button>
-                    </div>
+                 <div class="flex flex-wrap sm:flex-row flex-col items-center space-x-2 space-y-2 sm:space-y-0 notes-controls w-full">
+                  <div id="color-palette" class="flex space-x-1"></div>
+                  <!-- Group by Tag Toggle -->
+                  <label class="flex items-center cursor-pointer text-sm font-medium">
+                    <input type="checkbox" id="group-by-tag-toggle" class="mr-2">
+                    Group by Tag
+                  </label>
+                  <!-- Show/Hide All Notes Toggle -->
+                  <label class="flex items-center cursor-pointer text-sm font-medium">
+                    <input type="checkbox" id="show-all-notes-toggle" class="mr-2" checked>
+                    Show All Notes
+                  </label>
+                  <!-- Export/Import Notes Buttons -->
+                  <button onclick="exportNotes()" class="bg-blue-100 text-blue-700 px-3 py-1 rounded">Export Notes</button>
+                  <input type="file" id="importNotesFile" style="display:none" onchange="importNotes(event)">
+                  <button onclick="document.getElementById('importNotesFile').click()" class="bg-green-100 text-green-700 px-3 py-1 rounded">Import Notes</button>
+                  <button onclick="openNoteModal()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-2"></i>Add Note</button>
                 </div>
                 <div id="notes-container" class="w-full h-full rounded-lg bg-gray-200/50 border-2 border-dashed border-gray-400 relative overflow-auto"></div>
             </section>
@@ -2204,6 +2252,50 @@
           document.getElementById('header-greeting').innerHTML = `🏆 Welcome back, <span class='text-green-900'>${username}</span>!!`;
         }
         document.addEventListener('DOMContentLoaded', updateHeaderGreeting);
+
+        function exportNotes() {
+          const notes = JSON.parse(localStorage.getItem('NOTES') || '[]');
+          const blob = new Blob([JSON.stringify(notes, null, 2)], {type: 'application/json'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'notes.json';
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+        function importNotes(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              const notes = JSON.parse(e.target.result);
+              if (Array.isArray(notes)) {
+                localStorage.setItem('NOTES', JSON.stringify(notes));
+                alert('Notes imported successfully!');
+                location.reload();
+              } else {
+                alert('Invalid notes file.');
+              }
+            } catch {
+              alert('Error importing notes.');
+            }
+          };
+          reader.readAsText(file);
+        }
+        // Show/Hide All Notes toggle logic
+        function setupShowAllNotesToggle() {
+          const showAllNotesToggle = document.getElementById('show-all-notes-toggle');
+          if (showAllNotesToggle) {
+            showAllNotesToggle.addEventListener('change', function() {
+              const show = this.checked;
+              document.getElementById('notes-container').style.display = show ? 'block' : 'none';
+            });
+          }
+        }
+        document.addEventListener('DOMContentLoaded', setupShowAllNotesToggle);
+        window.exportNotes = exportNotes;
+        window.importNotes = importNotes;
     </script>
 
     <!-- Add Help button to header (example, place in your header/navbar) -->
