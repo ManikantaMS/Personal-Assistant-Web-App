@@ -46,7 +46,6 @@
             font-family: 'Inter', sans-serif; 
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            overflow-x: hidden;
         }
 
         .nav-btn.active { 
@@ -218,111 +217,6 @@
         .toast.info {
             background-color: #007bff !important;
         }
-
-        /* Responsive containers and cards */
-        .app-section, .bg-white.rounded-lg.shadow, .note {
-          box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04), 0 1.5px 4px 0 rgba(0,0,0,0.03);
-          border-radius: 1rem;
-          width: 100%;
-          max-width: 100%;
-        }
-        .notes-controls {
-          flex-wrap: wrap;
-          gap: 0.5rem;
-          width: 100%;
-        }
-        @media (max-width: 600px) {
-          .notes-controls {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0.5rem;
-          }
-          .app-section, .bg-white.rounded-lg.shadow, .note {
-            padding: 1rem 0.5rem;
-            font-size: 1rem;
-          }
-          h2, h1, .text-2xl, .text-xl {
-            font-size: 1.2rem !important;
-          }
-          button, .nav-btn {
-            font-size: 1rem !important;
-            padding: 0.5rem 1rem !important;
-          }
-        }
-        @media (max-width: 600px) {
-          nav {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            width: 100% !important;
-            gap: 0.5rem !important;
-          }
-          .nav-btn, button {
-            width: 100% !important;
-            min-width: 0 !important;
-            font-size: 1rem !important;
-            padding: 0.5rem 0 !important;
-          }
-        }
-        @media (max-width: 700px) {
-          .header-main {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-          }
-          .logo-title {
-            flex: 1 1 auto;
-            justify-content: flex-start;
-          }
-          .navbar {
-            display: none;
-            position: absolute;
-            top: 60px;
-            left: 0;
-            width: 100vw;
-            background: #fff;
-            flex-direction: column;
-            gap: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            z-index: 100;
-            padding: 1rem 0;
-          }
-          .navbar.active {
-            display: flex;
-          }
-          .hamburger {
-            display: block;
-            background: none;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            margin-left: 1rem;
-          }
-        }
-        @media (min-width: 701px) {
-          .header-main {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 2rem;
-          }
-          .logo-title {
-            flex: 1 1 auto;
-            justify-content: flex-start;
-          }
-          .navbar {
-            display: flex !important;
-            flex-direction: row;
-            gap: 2rem;
-            position: static;
-            background: none;
-            box-shadow: none;
-            padding: 0;
-          }
-          .hamburger {
-            display: none;
-          }
-        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -354,21 +248,25 @@
     <!-- Main Application Container -->
     <div id="app-container" class="min-h-screen hidden">
         <!-- Header -->
-        <header class="w-full bg-white shadow-sm sticky top-0 z-40">
-          <div class="header-main flex items-center justify-between relative">
-            <div class="logo-title flex items-center gap-2">
-              <span class="text-3xl text-indigo-600"><i class="fas fa-user-shield"></i></span>
-              <span class="text-2xl font-bold text-gray-800">Personal Assistant Pro</span>
-            </div>
-            <nav class="navbar flex gap-4">
-              <button id="nav-dashboard" onclick="showSection('dashboard')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Dashboard</button>
-              <button id="nav-tasks" onclick="showSection('tasks')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Tasks</button>
-              <button id="nav-budget" onclick="showSection('budget')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Budget</button>
-              <button id="nav-notes" onclick="showSection('notes')" class="nav-btn px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 transition">Notes</button>
-            </nav>
-            <button class="hamburger" id="hamburger" aria-label="Open navigation">&#9776;</button>
+        <div class="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-3xl text-indigo-600"><i class="fas fa-user-shield"></i></span>
+            <span class="text-2xl font-bold text-gray-800">Personal Assistant Pro</span>
           </div>
-        </header>
+          <div class="flex items-center gap-4">
+            <span id="header-greeting" class="text-xl font-semibold text-green-700 bg-green-50 px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
+              🏆 Welcome back, Champ!!
+            </span>
+            <!-- Navigation -->
+            <nav class="ml-6 flex gap-4">
+              <button onclick="showSection('dashboard')" class="px-4 py-2 rounded-lg font-semibold bg-green-600 text-white">Dashboard</button>
+              <button onclick="showSection('tasks')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Tasks</button>
+              <button onclick="showSection('budget')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Budget</button>
+              <button onclick="showSection('notes')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">Notes</button>
+              <button onclick="showSection('profile')" class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-gray-100">My Profile</button>
+            </nav>
+          </div>
+        </div>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
             <div id="daily-recommendation" class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-md mb-6 flex items-center">
@@ -544,25 +442,261 @@
             </section>
 
             <section id="notes" class="app-section hidden">
-                 <div class="flex flex-wrap sm:flex-row flex-col items-center space-x-2 space-y-2 sm:space-y-0 notes-controls w-full">
-                  <div id="color-palette" class="flex space-x-1"></div>
-                  <!-- Group by Tag Toggle -->
-                  <label class="flex items-center cursor-pointer text-sm font-medium">
-                    <input type="checkbox" id="group-by-tag-toggle" class="mr-2">
-                    Group by Tag
-                  </label>
-                  <!-- Show/Hide All Notes Toggle -->
-                  <label class="flex items-center cursor-pointer text-sm font-medium">
-                    <input type="checkbox" id="show-all-notes-toggle" class="mr-2" checked>
-                    Show All Notes
-                  </label>
-                  <!-- Export/Import Notes Buttons -->
-                  <button onclick="exportNotes()" class="bg-blue-100 text-blue-700 px-3 py-1 rounded">Export Notes</button>
-                  <input type="file" id="importNotesFile" style="display:none" onchange="importNotes(event)">
-                  <button onclick="document.getElementById('importNotesFile').click()" class="bg-green-100 text-green-700 px-3 py-1 rounded">Import Notes</button>
-                  <button onclick="openNoteModal()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-2"></i>Add Note</button>
+                 <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-700">Sticky Notes</h2>
+                    <div class="flex items-center space-x-2">
+                        <div id="color-palette" class="flex space-x-1"></div>
+                        <!-- Group by Tag Toggle -->
+                        <label class="flex items-center cursor-pointer text-sm font-medium">
+                            <input type="checkbox" id="group-by-tag-toggle" class="mr-2">
+                            Group by Tag
+                        </label>
+                        <button onclick="openNoteModal()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-2"></i>Add Note</button>
+                    </div>
                 </div>
                 <div id="notes-container" class="w-full h-full rounded-lg bg-gray-200/50 border-2 border-dashed border-gray-400 relative overflow-auto"></div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="app-section hidden">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-700">My Profile</h2>
+                        <button onclick="saveProfile()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition">
+                            <i class="fas fa-save mr-2"></i>Save Changes
+                        </button>
+                    </div>
+
+                    <!-- Profile Tabs -->
+                    <div class="mb-6">
+                        <ul class="flex border-b">
+                            <li><a class="tab-link active inline-block border-l border-t border-r rounded-t py-2 px-4 font-semibold" href="#" onclick="showProfileTab(event, 'personal')">Personal Info</a></li>
+                            <li><a class="tab-link inline-block py-2 px-4 text-gray-500 hover:text-indigo-700 font-semibold" href="#" onclick="showProfileTab(event, 'preferences')">Preferences</a></li>
+                            <li><a class="tab-link inline-block py-2 px-4 text-gray-500 hover:text-indigo-700 font-semibold" href="#" onclick="showProfileTab(event, 'security')">Security</a></li>
+                            <li><a class="tab-link inline-block py-2 px-4 text-gray-500 hover:text-indigo-700 font-semibold" href="#" onclick="showProfileTab(event, 'data')">Data Management</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Personal Info Tab -->
+                    <div id="profile-personal-tab" class="bg-white p-6 rounded-b-lg rounded-r-lg border border-t-0">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Basic Information</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                        <input type="text" id="profile-name" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input type="email" id="profile-email" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                        <input type="tel" id="profile-phone" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                                        <input type="date" id="profile-dob" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Additional Information</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Occupation</label>
+                                        <input type="text" id="profile-occupation" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                                        <input type="text" id="profile-location" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                                        <textarea id="profile-bio" rows="3" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Tell us about yourself..."></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
+                                        <div class="flex items-center space-x-4">
+                                            <div id="profile-avatar" class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-500">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <button onclick="document.getElementById('profile-picture-input').click()" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200 transition">
+                                                <i class="fas fa-camera mr-2"></i>Upload Photo
+                                            </button>
+                                            <input type="file" id="profile-picture-input" accept="image/*" class="hidden" onchange="handleProfilePictureUpload(event)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferences Tab -->
+                    <div id="profile-preferences-tab" class="bg-white p-6 rounded-b-lg rounded-r-lg border border-t-0 hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">App Preferences</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Default Theme</label>
+                                        <select id="profile-default-theme" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option value="light">Light</option>
+                                            <option value="dark">Dark</option>
+                                            <option value="nature">Nature</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                                        <select id="profile-language" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option value="en">English</option>
+                                            <option value="es">Spanish</option>
+                                            <option value="fr">French</option>
+                                            <option value="de">German</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Zone</label>
+                                        <select id="profile-timezone" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option value="UTC">UTC</option>
+                                            <option value="EST">Eastern Time</option>
+                                            <option value="PST">Pacific Time</option>
+                                            <option value="GMT">GMT</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" id="profile-notifications" class="mr-2">
+                                            <span class="text-sm font-medium text-gray-700">Enable Notifications</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" id="profile-reminders" class="mr-2">
+                                            <span class="text-sm font-medium text-gray-700">Daily Reminders</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Task & Budget Preferences</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Default Task Priority</label>
+                                        <select id="profile-default-priority" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option value="low">Low</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="high">High</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Default Task Category</label>
+                                        <select id="profile-default-category" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option value="Personal">Personal</option>
+                                            <option value="Work">Work</option>
+                                            <option value="Study">Study</option>
+                                            <option value="Health">Health</option>
+                                            <option value="Home">Home</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                                        <select id="profile-currency" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option value="USD">USD ($)</option>
+                                            <option value="EUR">EUR (€)</option>
+                                            <option value="GBP">GBP (£)</option>
+                                            <option value="CAD">CAD (C$)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Monthly Budget Goal</label>
+                                        <input type="number" id="profile-monthly-budget" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Tab -->
+                    <div id="profile-security-tab" class="bg-white p-6 rounded-b-lg rounded-r-lg border border-t-0 hidden">
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Change Password</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                                        <input type="password" id="profile-current-password" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                                        <input type="password" id="profile-new-password" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                                        <input type="password" id="profile-confirm-password" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button onclick="changePassword()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+                                            <i class="fas fa-key mr-2"></i>Change Password
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Security Settings</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" id="profile-two-factor" class="mr-2">
+                                            <span class="text-sm font-medium text-gray-700">Enable Two-Factor Authentication</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" id="profile-session-timeout" class="mr-2">
+                                            <span class="text-sm font-medium text-gray-700">Auto-logout after 30 minutes of inactivity</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Management Tab -->
+                    <div id="profile-data-tab" class="bg-white p-6 rounded-b-lg rounded-r-lg border border-t-0 hidden">
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Export Data</h3>
+                                <p class="text-sm text-gray-600 mb-4">Download all your data as a JSON file for backup purposes.</p>
+                                <button onclick="exportUserData()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                    <i class="fas fa-download mr-2"></i>Export All Data
+                                </button>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Import Data</h3>
+                                <p class="text-sm text-gray-600 mb-4">Import previously exported data. This will replace your current data.</p>
+                                <div class="flex items-center space-x-4">
+                                    <input type="file" id="import-data-input" accept=".json" class="hidden" onchange="importUserData(event)">
+                                    <button onclick="document.getElementById('import-data-input').click()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                                        <i class="fas fa-upload mr-2"></i>Choose File
+                                    </button>
+                                    <span id="import-file-name" class="text-sm text-gray-500"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4 text-red-600">Danger Zone</h3>
+                                <div class="border border-red-200 rounded-lg p-4 bg-red-50">
+                                    <p class="text-sm text-red-700 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+                                    <button onclick="deleteAccount()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+                                        <i class="fas fa-trash mr-2"></i>Delete Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
     </div>
@@ -631,41 +765,18 @@
     </div>
 
     <!-- Help & FAQ Section -->
-    <div class="flex flex-col items-center text-center">
-      <section id="help" class="bg-white rounded-lg shadow p-4 mt-8 max-w-2xl w-full">
-        <h2 class="text-lg font-bold mb-6">Help & FAQ</h2>
-        <div class="flex flex-col items-center w-full">
-          <div class="faq-item w-full max-w-xl mx-auto mb-2">
-            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I add a task?</button>
-            <div class="faq-answer hidden text-base py-2">Click the "Add Task" button and fill in the details.</div>
-          </div>
-          <div class="faq-item w-full max-w-xl mx-auto mb-2">
-            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I track my habits?</button>
-            <div class="faq-answer hidden text-base py-2">Use the Habit Tracker section to mark your daily progress.</div>
-          </div>
-          <div class="faq-item w-full max-w-xl mx-auto mb-2">
-            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I switch themes?</button>
-            <div class="faq-answer hidden text-base py-2">Use the theme switcher in the top-right corner.</div>
-          </div>
-          <div class="faq-item w-full max-w-xl mx-auto mb-2">
-            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">Is my data safe?</button>
-            <div class="faq-answer hidden text-base py-2">All your data is stored locally in your browser and never leaves your device.</div>
-          </div>
-          <div class="faq-item w-full max-w-xl mx-auto mb-2">
-            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">Can I export or import my data?</button>
-            <div class="faq-answer hidden text-base py-2">Yes! Use the Export/Import buttons in the settings menu.</div>
-          </div>
-          <div class="faq-item w-full max-w-xl mx-auto mb-2">
-            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I use the meditation timer?</button>
-            <div class="faq-answer hidden text-base py-2">In the Habit Tracker, click "Start" under Meditate to begin a 10-minute session.</div>
-          </div>
-          <div class="faq-item w-full max-w-xl mx-auto mb-2">
-            <button class="faq-question w-full text-lg font-semibold py-2 px-4 rounded bg-indigo-50 hover:bg-indigo-100 transition text-center" onclick="this.nextElementSibling.classList.toggle('hidden')">How do I earn achievement badges?</button>
-            <div class="faq-answer hidden text-base py-2">Complete the 30-day habit challenge to unlock the badge!</div>
-          </div>
-        </div>
-      </section>
-    </div>
+    <section id="help" class="bg-white rounded-lg shadow p-4 mt-8 max-w-2xl mx-auto">
+      <h2 class="text-lg font-bold mb-2">Help & FAQ</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li><b>How do I add a task?</b> Click the "Add Task" button and fill in the details.</li>
+        <li><b>How do I track my habits?</b> Use the Habit Tracker section to mark your daily progress.</li>
+        <li><b>How do I switch themes?</b> Use the theme switcher in the top-right corner.</li>
+        <li><b>Is my data safe?</b> All your data is stored locally in your browser and never leaves your device.</li>
+        <li><b>Can I export or import my data?</b> Yes! Use the Export/Import buttons in the settings menu.</li>
+        <li><b>How do I use the meditation timer?</b> In the Habit Tracker, click "Start" under Meditate to begin a 10-minute session.</li>
+        <li><b>How do I earn achievement badges?</b> Complete the 30-day habit challenge to unlock the badge!</li>
+      </ul>
+    </section>
 
     <!-- Tutorial Modal -->
     <div id="tutorial-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
@@ -694,7 +805,8 @@
             BUDGETS: 'budgets',
             NOTES: 'notes',
             TASKS: 'tasks',
-            TASK_TEMPLATES: 'taskTemplates' // New: Key for task templates
+            TASK_TEMPLATES: 'taskTemplates', // New: Key for task templates
+            USER_PROFILE: 'userProfile' // New: Key for user profile data
         };
 
         // Initialize data
@@ -718,6 +830,7 @@
           document.getElementById('tasks').classList.add('hidden');
           document.getElementById('budget').classList.add('hidden');
           document.getElementById('notes').classList.add('hidden');
+          document.getElementById('profile').classList.add('hidden');
           document.getElementById(sectionId).classList.remove('hidden');
         }
         window.showSection = showSection;
@@ -762,8 +875,8 @@
             document.getElementById('task-input').value = task ? task.text : '';
             document.getElementById('task-start-date').value = task ? task.startDate : '';
             document.getElementById('task-due-date').value = task ? task.dueDate : '';
-            document.getElementById('task-priority').value = task ? task.priority : 'medium';
-            document.getElementById('task-category').value = task ? task.category || 'Other' : 'Other';
+            document.getElementById('task-priority').value = task ? task.priority : (userProfile.preferences?.defaultPriority || 'medium');
+            document.getElementById('task-category').value = task ? task.category || 'Other' : (userProfile.preferences?.defaultCategory || 'Other');
             // Set recurrence value when opening modal
             taskRecurrenceSelect.value = task ? task.recurrence || 'none' : 'none';
             
@@ -1144,6 +1257,11 @@
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
                 document.getElementById('welcome-message').textContent = 'Welcome Mani Ramaiah...';
+                
+                // Update page title with user's name
+                const displayName = userProfile.name || 'Admin User';
+                document.title = `Personal Assistant Pro - ${displayName}`;
+                
                 loadAllData();
             } else {
                 const errorEl = document.getElementById('login-error');
@@ -1162,6 +1280,7 @@
             renderBudgetAllocation();
             updateDashboard();
             getAIRecommendation();
+            loadProfileData(); // Load profile data
         }
 
         // Task Management
@@ -2337,52 +2456,289 @@
         }
         document.addEventListener('DOMContentLoaded', updateHeaderGreeting);
 
-        function exportNotes() {
-          const notes = JSON.parse(localStorage.getItem('NOTES') || '[]');
-          const blob = new Blob([JSON.stringify(notes, null, 2)], {type: 'application/json'});
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'notes.json';
-          a.click();
-          URL.revokeObjectURL(url);
-        }
-        function importNotes(event) {
-          const file = event.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            try {
-              const notes = JSON.parse(e.target.result);
-              if (Array.isArray(notes)) {
-                localStorage.setItem('NOTES', JSON.stringify(notes));
-                alert('Notes imported successfully!');
-                location.reload();
-              } else {
-                alert('Invalid notes file.');
-              }
-            } catch {
-              alert('Error importing notes.');
+        // New: Initialize user profile data
+        let userProfile = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_PROFILE)) || {
+            name: 'Admin User',
+            email: 'admin@example.com',
+            phone: '',
+            dob: '',
+            occupation: '',
+            location: '',
+            bio: '',
+            profilePicture: null,
+            preferences: {
+                defaultTheme: 'light',
+                language: 'en',
+                timezone: 'UTC',
+                notifications: true,
+                reminders: true,
+                defaultPriority: 'medium',
+                defaultCategory: 'Personal',
+                currency: 'USD',
+                monthlyBudget: 0
+            },
+            security: {
+                twoFactor: false,
+                sessionTimeout: false
             }
-          };
-          reader.readAsText(file);
-        }
-        // Show/Hide All Notes toggle logic
-        function setupShowAllNotesToggle() {
-          const showAllNotesToggle = document.getElementById('show-all-notes-toggle');
-          if (showAllNotesToggle) {
-            showAllNotesToggle.addEventListener('change', function() {
-              const show = this.checked;
-              document.getElementById('notes-container').style.display = show ? 'block' : 'none';
-            });
-          }
-        }
-        document.addEventListener('DOMContentLoaded', setupShowAllNotesToggle);
-        window.exportNotes = exportNotes;
-        window.importNotes = importNotes;
-        document.getElementById('hamburger').onclick = function() {
-          document.querySelector('.navbar').classList.toggle('active');
         };
+
+        // =============================
+        //         PROFILE MANAGEMENT
+        // =============================
+
+        // Profile Tab Management
+        window.showProfileTab = (event, tabName) => {
+            event.preventDefault();
+            document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Hide all profile tabs
+            document.getElementById('profile-personal-tab').classList.add('hidden');
+            document.getElementById('profile-preferences-tab').classList.add('hidden');
+            document.getElementById('profile-security-tab').classList.add('hidden');
+            document.getElementById('profile-data-tab').classList.add('hidden');
+
+            // Show selected tab
+            document.getElementById(`profile-${tabName}-tab`).classList.remove('hidden');
+        };
+
+        // Load Profile Data
+        function loadProfileData() {
+            document.getElementById('profile-name').value = userProfile.name || '';
+            document.getElementById('profile-email').value = userProfile.email || '';
+            document.getElementById('profile-phone').value = userProfile.phone || '';
+            document.getElementById('profile-dob').value = userProfile.dob || '';
+            document.getElementById('profile-occupation').value = userProfile.occupation || '';
+            document.getElementById('profile-location').value = userProfile.location || '';
+            document.getElementById('profile-bio').value = userProfile.bio || '';
+
+            // Load preferences
+            document.getElementById('profile-default-theme').value = userProfile.preferences?.defaultTheme || 'light';
+            document.getElementById('profile-language').value = userProfile.preferences?.language || 'en';
+            document.getElementById('profile-timezone').value = userProfile.preferences?.timezone || 'UTC';
+            document.getElementById('profile-notifications').checked = userProfile.preferences?.notifications || false;
+            document.getElementById('profile-reminders').checked = userProfile.preferences?.reminders || false;
+            document.getElementById('profile-default-priority').value = userProfile.preferences?.defaultPriority || 'medium';
+            document.getElementById('profile-default-category').value = userProfile.preferences?.defaultCategory || 'Personal';
+            document.getElementById('profile-currency').value = userProfile.preferences?.currency || 'USD';
+            document.getElementById('profile-monthly-budget').value = userProfile.preferences?.monthlyBudget || '';
+
+            // Load security settings
+            document.getElementById('profile-two-factor').checked = userProfile.security?.twoFactor || false;
+            document.getElementById('profile-session-timeout').checked = userProfile.security?.sessionTimeout || false;
+
+            // Load profile picture if exists
+            if (userProfile.profilePicture) {
+                const avatar = document.getElementById('profile-avatar');
+                avatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-16 h-16 rounded-full object-cover">`;
+            }
+        }
+
+        // Save Profile Data
+        window.saveProfile = () => {
+            userProfile.name = document.getElementById('profile-name').value;
+            userProfile.email = document.getElementById('profile-email').value;
+            userProfile.phone = document.getElementById('profile-phone').value;
+            userProfile.dob = document.getElementById('profile-dob').value;
+            userProfile.occupation = document.getElementById('profile-occupation').value;
+            userProfile.location = document.getElementById('profile-location').value;
+            userProfile.bio = document.getElementById('profile-bio').value;
+
+            // Save preferences
+            userProfile.preferences = {
+                defaultTheme: document.getElementById('profile-default-theme').value,
+                language: document.getElementById('profile-language').value,
+                timezone: document.getElementById('profile-timezone').value,
+                notifications: document.getElementById('profile-notifications').checked,
+                reminders: document.getElementById('profile-reminders').checked,
+                defaultPriority: document.getElementById('profile-default-priority').value,
+                defaultCategory: document.getElementById('profile-default-category').value,
+                currency: document.getElementById('profile-currency').value,
+                monthlyBudget: parseFloat(document.getElementById('profile-monthly-budget').value) || 0
+            };
+
+            // Save security settings
+            userProfile.security = {
+                twoFactor: document.getElementById('profile-two-factor').checked,
+                sessionTimeout: document.getElementById('profile-session-timeout').checked
+            };
+
+            // Apply theme if changed
+            if (userProfile.preferences.defaultTheme !== document.documentElement.getAttribute('data-theme')) {
+                changeTheme(userProfile.preferences.defaultTheme);
+            }
+
+            // Update monthly budget in budget system
+            if (userProfile.preferences.monthlyBudget > 0) {
+                localBudgets.monthlyGoal = userProfile.preferences.monthlyBudget;
+                localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(localBudgets));
+            }
+
+            localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(userProfile));
+            showToast('Profile updated successfully!', 'success');
+            updateHeaderGreeting(); // Update header with new name
+            
+            // Update page title with new name
+            const displayName = userProfile.name || 'Admin User';
+            document.title = `Personal Assistant Pro - ${displayName}`;
+        };
+
+        // Handle Profile Picture Upload
+        window.handleProfilePictureUpload = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userProfile.profilePicture = e.target.result;
+                    const avatar = document.getElementById('profile-avatar');
+                    avatar.innerHTML = `<img src="${e.target.result}" alt="Profile" class="w-16 h-16 rounded-full object-cover">`;
+                    localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(userProfile));
+                    showToast('Profile picture updated!', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // Change Password
+        window.changePassword = () => {
+            const currentPassword = document.getElementById('profile-current-password').value;
+            const newPassword = document.getElementById('profile-new-password').value;
+            const confirmPassword = document.getElementById('profile-confirm-password').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('Please fill in all password fields.', 'error');
+                return;
+            }
+
+            if (currentPassword !== 'admin') {
+                showToast('Current password is incorrect.', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match.', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showToast('New password must be at least 6 characters long.', 'error');
+                return;
+            }
+
+            // In a real application, you would update the password in your backend
+            // For this demo, we'll just show a success message
+            showToast('Password changed successfully!', 'success');
+            
+            // Clear password fields
+            document.getElementById('profile-current-password').value = '';
+            document.getElementById('profile-new-password').value = '';
+            document.getElementById('profile-confirm-password').value = '';
+        };
+
+        // Export User Data
+        window.exportUserData = () => {
+            const exportData = {
+                profile: userProfile,
+                tasks: localTasks,
+                transactions: localTransactions,
+                budgets: localBudgets,
+                notes: localNotes,
+                taskTemplates: localTaskTemplates,
+                habitProgress: JSON.parse(localStorage.getItem(HABIT_STORAGE_KEY) || '{}'),
+                exportDate: new Date().toISOString()
+            };
+
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `personal-assistant-data-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('Data exported successfully!', 'success');
+        };
+
+        // Import User Data
+        window.importUserData = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importData = JSON.parse(e.target.result);
+                    
+                    if (confirm('This will replace all your current data. Are you sure you want to continue?')) {
+                        // Import data
+                        if (importData.profile) userProfile = importData.profile;
+                        if (importData.tasks) localTasks = importData.tasks;
+                        if (importData.transactions) localTransactions = importData.transactions;
+                        if (importData.budgets) localBudgets = importData.budgets;
+                        if (importData.notes) localNotes = importData.notes;
+                        if (importData.taskTemplates) localTaskTemplates = importData.taskTemplates;
+                        if (importData.habitProgress) localStorage.setItem(HABIT_STORAGE_KEY, JSON.stringify(importData.habitProgress));
+
+                        // Save to localStorage
+                        localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(userProfile));
+                        localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(localTasks));
+                        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(localTransactions));
+                        localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(localBudgets));
+                        localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(localNotes));
+                        localStorage.setItem(STORAGE_KEYS.TASK_TEMPLATES, JSON.stringify(localTaskTemplates));
+
+                        // Reload all data
+                        loadAllData();
+                        loadProfileData();
+                        showToast('Data imported successfully!', 'success');
+                    }
+                } catch (error) {
+                    showToast('Error importing data. Please check the file format.', 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Update file name display
+            document.getElementById('import-file-name').textContent = file.name;
+        };
+
+        // Delete Account
+        window.deleteAccount = () => {
+            if (confirm('Are you absolutely sure you want to delete your account? This action cannot be undone and will permanently delete all your data.')) {
+                if (confirm('This is your final warning. All your data will be permanently deleted. Type "DELETE" to confirm.')) {
+                    const confirmation = prompt('Type "DELETE" to confirm account deletion:');
+                    if (confirmation === 'DELETE') {
+                        // Clear all localStorage
+                        localStorage.clear();
+                        showToast('Account deleted. Redirecting to login...', 'info');
+                        
+                        // Redirect to login after a short delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        showToast('Account deletion cancelled.', 'info');
+                    }
+                }
+            }
+        };
+
+        // Update header greeting with profile name
+        function updateHeaderGreeting() {
+            const displayName = userProfile.name || 'Champ';
+            const headerGreeting = document.getElementById('header-greeting');
+            
+            // Create avatar HTML
+            let avatarHtml = '<div id="header-avatar" class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500"><i class="fas fa-user"></i></div>';
+            
+            // If user has a profile picture, use it
+            if (userProfile.profilePicture) {
+                avatarHtml = `<div id="header-avatar" class="w-8 h-8 rounded-full overflow-hidden"><img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover"></div>`;
+            }
+            
+            headerGreeting.innerHTML = `${avatarHtml} 🏆 Welcome back, <span class='text-green-900'>${displayName}</span>!!`;
+        }
     </script>
 
     <!-- Add Help button to header (example, place in your header/navbar) -->
